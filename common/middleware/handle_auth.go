@@ -67,8 +67,8 @@ func DetailAuthLog(r *http.Request, reason string) {
 	logx.Errorf("authorize failed: %s\n=> %+v", reason, string(details))
 }
 
-func CheckLogin(w http.ResponseWriter, r *http.Request,
-	checkBlackFn func(authorization string) bool, fetchSaltFn func(userId int64) ([]byte, error)) (*jwtx.CustomClaims, context.Context, bool) {
+func CheckLogin[T jwtx.BaseClaim](w http.ResponseWriter, r *http.Request,
+	checkBlackFn func(authorization string) bool, fetchSaltFn func(userId int64) ([]byte, error)) (*jwtx.CustomClaims[T], context.Context, bool) {
 	authorization := r.Header.Get("Authorization")
 	if len(authorization) < 1 {
 		Unauthorized(w, r, nil)
@@ -78,9 +78,9 @@ func CheckLogin(w http.ResponseWriter, r *http.Request,
 		Unauthorized(w, r, loginExpireErr)
 		return nil, r.Context(), false
 	}
-	var claim jwtx.CustomClaims
+	var claim jwtx.CustomClaims[T]
 	tok, err := jwtv4.ParseWithClaims(authorization, &claim, func(t *jwtv4.Token) (interface{}, error) {
-		return fetchSaltFn(claim.BaseClaims.ID)
+		return fetchSaltFn(claim.BaseClaims.GetUserId())
 	})
 	//tok, err := parser.ParseToken(r, m.secret, "")
 	if err != nil {

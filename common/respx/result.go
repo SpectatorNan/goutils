@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
 	"github.com/SpectatorNan/goutils/common/errorx"
-	"github.com/SpectatorNan/goutils/common/requestx"
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -19,15 +18,11 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 
 	ctx := r.Context()
 	if err == nil {
-		claim, err := requestx.FetchUserByJwtClaims(r.Context())
-		if err == nil {
-			requestx.SetHeaderUserId(r, &claim.ID)
-		}
 
 		//成功返回
-		r := NewSuccessResponse(resp)
+		rp := NewSuccessResponse(resp)
 		//w.Header().Add(projectConst.OperateLogResultHeaderKey, "ok")
-		httpx.WriteJson(w, http.StatusOK, r)
+		httpx.WriteJson(w, http.StatusOK, rp)
 	} else {
 		//错误返回
 		dfe := errorx.DefaultErr

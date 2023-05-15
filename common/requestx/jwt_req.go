@@ -3,9 +3,7 @@ package requestx
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/SpectatorNan/goutils/common/jwtx"
-	"github.com/SpectatorNan/goutils/common/trace"
 	"github.com/zeromicro/go-zero/core/logx"
 	"unsafe"
 )
@@ -14,19 +12,24 @@ var (
 	ErrLoginExpire = errors.New("login expired")
 )
 
-func FetchUserIdByJwt(ctx context.Context) (int64, error) {
-	u, ok := ctx.Value("UserInfo").(jwtx.BaseClaims)
+const (
+	JwtCustomClaimKey = "spectatornan:goutils:jwt:customClaim"
+	JwtBaseClaimKey   = "spectatornan:goutils:jwt:baseClaim"
+)
+
+func FetchUserIdByJwt[T jwtx.BaseClaim](ctx context.Context) (int64, error) {
+	u, ok := ctx.Value(JwtBaseClaimKey).(T)
 	if !ok {
 		logx.WithContext(ctx).Infof("【valid auth token】: User JWT token illegal")
 		return 0, ErrLoginExpire //errorc.LoginExpireErrCode //errorx.NewMsgCodeError(errorx.UnLoginCode, "请重新登录")
 	}
-	return u.ID, nil
+	return u.GetUserId(), nil
 }
 
-func FetchUserByJwtClaims(ctx context.Context) (*jwtx.BaseClaims, error) {
-	fmt.Println(trace.SpanIdFromContext(ctx))
-	fmt.Println(trace.TraceIdFromContext(ctx))
-	u, ok := ctx.Value("userInfo").(jwtx.CustomClaims)
+func FetchUserByJwtClaims[T jwtx.BaseClaim](ctx context.Context) (*T, error) {
+	//fmt.Println(trace.SpanIdFromContext(ctx))
+	//fmt.Println(trace.TraceIdFromContext(ctx))
+	u, ok := ctx.Value(JwtCustomClaimKey).(jwtx.CustomClaims[T])
 	if !ok {
 		logx.WithContext(ctx).Infof("【valid auth token】: User JWT token illegal")
 		return nil, ErrLoginExpire //errorx.NewMsgCodeError(errorx.UnLoginCode, "请重新登录")
@@ -34,6 +37,7 @@ func FetchUserByJwtClaims(ctx context.Context) (*jwtx.BaseClaims, error) {
 	return &u.BaseClaims, nil
 }
 
+// forget feature ...
 func GetKeyValues(ctx context.Context) map[interface{}]interface{} {
 	m := make(map[interface{}]interface{})
 	getKeyValue(ctx, m)
