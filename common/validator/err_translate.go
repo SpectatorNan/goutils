@@ -3,6 +3,7 @@ package validator
 import (
 	"fmt"
 	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
+	language2 "github.com/SpectatorNan/goutils/common/language"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/es"
 	"github.com/go-playground/locales/zh"
@@ -12,7 +13,6 @@ import (
 	estrans "github.com/go-playground/validator/v10/translations/es"
 	zhtrans "github.com/go-playground/validator/v10/translations/zh"
 	"golang.org/x/text/language"
-	language2 "goutils/common/language"
 	"net/http"
 )
 

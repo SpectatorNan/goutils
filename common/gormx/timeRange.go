@@ -2,8 +2,8 @@ package gormx
 
 import (
 	"fmt"
+	"github.com/SpectatorNan/goutils/common/pagex"
 	"gorm.io/gorm"
-	"goutils/common/pagex"
 	"time"
 )
 

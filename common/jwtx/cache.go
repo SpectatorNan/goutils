@@ -3,9 +3,9 @@ package jwtx
 import (
 	"context"
 	"fmt"
+	"github.com/SpectatorNan/goutils/common/cryptx"
+	"github.com/SpectatorNan/goutils/common/tools"
 	"github.com/zeromicro/go-zero/core/stores/redis"
-	"goutils/common/cryptx"
-	"goutils/common/tools"
 	"strconv"
 )
 

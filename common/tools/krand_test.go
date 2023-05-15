@@ -1,7 +1,7 @@
 package tools
 
 import (
-	"goutils/common/cryptx"
+	"github.com/SpectatorNan/goutils/common/cryptx"
 	"testing"
 )
 

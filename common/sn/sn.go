@@ -2,7 +2,7 @@ package sn
 
 import (
 	"fmt"
-	"goutils/common/tools"
+	"github.com/SpectatorNan/goutils/common/tools"
 	"time"
 )
 

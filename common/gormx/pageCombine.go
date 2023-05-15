@@ -3,8 +3,8 @@ package gormx
 import (
 	"context"
 	"github.com/SpectatorNan/gorm-zero/gormc"
+	"github.com/SpectatorNan/goutils/common/pagex"
 	"gorm.io/gorm"
-	"goutils/common/pagex"
 )
 
 var tableSortDesc = "descend"

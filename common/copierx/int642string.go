@@ -1,8 +1,8 @@
 package copierx
 
 import (
+	"github.com/SpectatorNan/goutils/common/errorx"
 	"github.com/jinzhu/copier"
-	"goutils/common/errorx"
 	"strconv"
 )
 

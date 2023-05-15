@@ -3,8 +3,8 @@ package i18nx
 import (
 	"context"
 	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
+	language2 "github.com/SpectatorNan/goutils/common/language"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
-	language2 "goutils/common/language"
 	"net/http"
 )
 

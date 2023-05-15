@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/SpectatorNan/goutils/common/jwtx"
+	"github.com/SpectatorNan/goutils/common/trace"
 	"github.com/zeromicro/go-zero/core/logx"
-	"goutils/common/jwtx"
-	"goutils/common/trace"
 	"unsafe"
 )
 

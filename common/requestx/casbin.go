@@ -1,6 +1,6 @@
 package requestx
 
-import "goutils/common/casbinx"
+import "github.com/SpectatorNan/goutils/common/casbinx"
 
 func DefaultCasbin() []casbinx.Info {
 	return []casbinx.Info{

@@ -2,12 +2,12 @@ package interceptor
 
 import (
 	"context"
+	"github.com/SpectatorNan/goutils/common/errorx"
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"goutils/common/errorx"
 )
 
 func LoggerInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
