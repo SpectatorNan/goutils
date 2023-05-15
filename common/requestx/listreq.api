@@ -1,0 +1,5 @@
+type ListReq {
+    Page     int `json:"page,optional,default=1" form:"page,optional,default=1"`
+    PageSize int `json:"pageSize,optional,default=10" form:"pageSize,optional,default=10"`
+    Keyword  string `json:"keyword,optional" form:"keyword,optional"`
+}
