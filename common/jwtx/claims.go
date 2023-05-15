@@ -3,19 +3,16 @@ package jwtx
 import "github.com/golang-jwt/jwt/v4"
 
 // Custom claims structure
-type CustomClaims struct {
-	BaseClaims
+type CustomClaims[Base BaseClaim] struct {
+	BaseClaims Base
 	BufferTime int64
 	jwt.RegisteredClaims
 }
 
-func (c *CustomClaims) GetUserId() int64 {
-	return c.BaseClaims.ID
+func (c *CustomClaims[Base]) GetUserId() int64 {
+	return c.BaseClaims.GetUserId()
 }
 
-type BaseClaims struct {
-	ID          int64
-	NickName    string
-	UserName    string
-	AuthorityId string
+type BaseClaim interface {
+	GetUserId() int64
 }

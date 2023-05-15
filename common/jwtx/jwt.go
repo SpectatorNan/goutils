@@ -24,9 +24,10 @@ func NewJWTWithConfig(c Config) *JWT {
 		bufferTime: c.BufferTime, issuer: c.Issuer, effectTime: c.AccessExpire}
 }
 
-func (j *JWT) CreateClaims(baseClaims BaseClaims) CustomClaims {
+// CreateClaims
+func CreateClaims[T BaseClaim](j *JWT, baseClaims T) CustomClaims[T] {
 	now := time.Now()
-	claims := CustomClaims{
+	claims := CustomClaims[T]{
 		BaseClaims: baseClaims,
 		BufferTime: j.bufferTime,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -38,7 +39,7 @@ func (j *JWT) CreateClaims(baseClaims BaseClaims) CustomClaims {
 	return claims
 }
 
-func (j *JWT) CreateToken(claims CustomClaims, secret string) (string, error) {
+func CreateToken[T BaseClaim](claims CustomClaims[T], secret string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(secret))
 }

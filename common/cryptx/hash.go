@@ -9,7 +9,7 @@ func BcryptHash(password string) string {
 }
 
 // BcryptCheck 对比明文密码和数据库的哈希值
-func BcryptCheck(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+func BcryptCheck(inputPass, validPass string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(validPass), []byte(inputPass))
 	return err == nil
 }
