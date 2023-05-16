@@ -3,7 +3,7 @@ name: Auto update go dependencies
 on:
   schedule:
     # runs daily at 12:00 am
-    - cron: '0 0 * * *'
+    #- cron: '0 0 * * *'
   workflow_dispatch:
 
 env:
@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-go@v2
 
       - name: Run auto dependency update
-        uses: SpectatorNan/goutils@main
+        uses: romoh/dependencies-autoupdate@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           update-command: "'go get -u && go mod tidy && go build'"
