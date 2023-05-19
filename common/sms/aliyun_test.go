@@ -5,8 +5,6 @@ import (
 	"testing"
 )
 
-//AccessKey ID LTAI5tLP4UdSWJvDAgAR3PHx
-//AccessKey Secret osgQYYibFURKgRAbiuJkogiWUEJ0Re
 
 func TestSendAliSmsCode(t *testing.T) {
 
