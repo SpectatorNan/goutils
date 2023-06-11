@@ -16,7 +16,7 @@ import (
 
 var (
 	errCodeLoginExpire uint32 = 20106
-	loginExpireErr            = &errorx.I18nCodeError{Code: errCodeLoginExpire, MsgKey: "Users.LoginExpire", DefaultMsg: "Please login"}
+	loginExpireErr     error       = &errorx.I18nCodeError{Code: errCodeLoginExpire, MsgKey: "Users.LoginExpire", DefaultMsg: "Please login"}
 )
 
 func SetLoginExpireCode(code uint32) {
@@ -37,9 +37,9 @@ func Unauthorized(w http.ResponseWriter, r *http.Request, err error) {
 	}
 
 	// if user not setting HTTP header, we set header with 401
-	w.WriteHeader(http.StatusUnauthorized)
+	//w.WriteHeader(http.StatusUnauthorized)
 
-	httpx.WriteJson(w, http.StatusBadRequest,
+	httpx.WriteJson(w, http.StatusUnauthorized,
 		respx.NewErrorResponse(errCodeLoginExpire,
 			goi18nx.FormatText(r.Context(), "User.LoginExpire", "Please login")))
 
@@ -93,7 +93,7 @@ func CheckLogin[T jwtx.BaseClaim](w http.ResponseWriter, r *http.Request,
 		return nil, r.Context(), false
 	}
 	ctx := r.Context()
-	ctx = context.WithValue(ctx, "userInfo", claim)
+	ctx = context.WithValue(ctx, JwtBaseClaimKey, claim)
 
 	return &claim, ctx, true
 }
