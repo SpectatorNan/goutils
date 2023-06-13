@@ -27,7 +27,7 @@ require (
 	github.com/zeromicro/go-zero v1.5.3
 	go.opentelemetry.io/otel/trace v1.16.0
 	golang.org/x/crypto v0.9.0
-	golang.org/x/text v0.9.0
+	golang.org/x/text v0.10.0
 	google.golang.org/grpc v1.55.0
 	gorm.io/gorm v1.25.1
 )
