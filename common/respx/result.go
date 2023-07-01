@@ -1,11 +1,11 @@
 package respx
 
 import (
+	"context"
 	"fmt"
 	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
 	"github.com/SpectatorNan/goutils/common/errorx"
 	"github.com/pkg/errors"
-	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"google.golang.org/grpc/status"
@@ -44,12 +44,20 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 				errmsg = e.Message
 			}
 		} else if e, ok := causeErr.(*errorx.I18nCodeError); ok {
-			errmsg = goi18nx.FormatText(ctx, e.MsgKey, e.DefaultMsg)
+			if isHasI18n(ctx) {
+				errmsg = goi18nx.FormatText(ctx, e.MsgKey, e.DefaultMsg)
+			} else {
+				errmsg = dfe.DefaultMsg
+			}
 			errCode = e.Code
 		} else if err == gorm.ErrRecordNotFound {
 			dfe = errorx.NotFoundResourceErr
 			errCode = dfe.Code
-			errmsg = goi18nx.FormatText(ctx, dfe.MsgKey, dfe.DefaultMsg)
+			if isHasI18n(ctx) {
+				errmsg = goi18nx.FormatText(ctx, dfe.MsgKey, dfe.DefaultMsg)
+			} else {
+				errmsg = dfe.DefaultMsg
+			}
 			httpx.WriteJson(w, http.StatusOK, NewErrorResponse(errCode, errmsg))
 			logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
 			logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errreason)
@@ -58,25 +66,35 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 			if gstatus, ok := status.FromError(causeErr); ok { // grpc err错误
 				grpcCode := uint32(gstatus.Code())
 				if grpcCode != errorx.ErrCodeDefault {
+					// grpc err
+					// must add interceptors in grpc server, like this:
+					// s.AddUnaryInterceptors(interceptor.LoggerInterceptor)
 					errCode = grpcCode
 					errmsg = gstatus.Message()
-
-					var ice errorx.I18nCodeError
-					if err := jsonx.Unmarshal([]byte(errmsg), &ice); err == nil {
-						errmsg = goi18nx.FormatText(ctx, ice.MsgKey, ice.DefaultMsg)
-						errCode = ice.Code
-					}
-					var ce errorx.CodeError
-					if err := jsonx.Unmarshal([]byte(errmsg), &ce); err == nil {
-						if ce.Code != dfe.Code {
-							errmsg = ce.Message
-							if len(ce.Reason) > 0 {
-								errreason = ce.Reason
+					/*
+						var ice errorx.I18nCodeError
+						var ce errorx.CodeError
+						if err := jsonx.Unmarshal([]byte(errmsg), &ice); err == nil {
+							errmsg = goi18nx.FormatText(ctx, ice.MsgKey, ice.DefaultMsg)
+							errCode = ice.Code
+						} else if err := jsonx.Unmarshal([]byte(errmsg), &ce); err == nil {
+							if ce.Code != dfe.Code {
+								errmsg = ce.Message
+								if len(ce.Reason) > 0 {
+									errreason = ce.Reason
+								}
+							} else {
+								errmsg = ce.Message
 							}
 						} else {
-							errmsg = ce.Message
+							errCode = errorx.ErrCodeDefault
+							if isHasI18n(ctx) {
+								errmsg = goi18nx.FormatText(ctx, errorx.ErrMsgI18nKey, errorx.ErrMsgDefault)
+							} else {
+								errmsg = errorx.ErrMsgDefault
+							}
 						}
-					}
+					*/
 				}
 			}
 		}
@@ -86,6 +104,14 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 
 		httpx.WriteJson(w, http.StatusOK, NewErrorResponse(errCode, errmsg))
 	}
+}
+
+func isHasI18n(ctx context.Context) bool {
+	v := ctx.Value(goi18nx.I18nKey)
+	if v != nil {
+		return true
+	}
+	return false
 }
 
 //func ErrHandle(err error) (int, interface{}) {
