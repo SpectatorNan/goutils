@@ -16,14 +16,19 @@ import (
 
 var (
 	errCodeLoginExpire uint32 = 20106
-	loginExpireErr     error       = &errorx.I18nCodeError{Code: errCodeLoginExpire, MsgKey: "Users.LoginExpire", DefaultMsg: "Please login"}
+	loginExpireErr     error  = &errorx.I18nCodeError{Code: errCodeLoginExpire, MsgKey: "Users.LoginExpire", DefaultMsg: "Please login"}
 )
 
 func SetLoginExpireCode(code uint32) {
 	errCodeLoginExpire = code
 }
 
-func SetLoginExpireErr(err *errorx.I18nCodeError) {
+func SetLoginExpireWithCodeErr(err *errorx.CodeError) {
+	SetLoginExpireCode(err.Code)
+	loginExpireErr = err
+}
+
+func SetLoginExpireWithI18nErr(err *errorx.I18nCodeError) {
 	SetLoginExpireCode(err.Code)
 	loginExpireErr = err
 }
