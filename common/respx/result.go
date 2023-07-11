@@ -13,6 +13,12 @@ import (
 	"net/http"
 )
 
+var statusCode = http.StatusOK
+
+func SetStatusCode(code int) {
+	statusCode = code
+}
+
 // HttpResult
 func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err error) {
 
@@ -22,7 +28,7 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 		//成功返回
 		rp := NewSuccessResponse(resp)
 		//w.Header().Add(projectConst.OperateLogResultHeaderKey, "ok")
-		httpx.WriteJson(w, http.StatusOK, rp)
+		httpx.WriteJson(w, statusCode, rp)
 	} else {
 		//错误返回
 		dfe := errorx.DefaultErr
@@ -58,7 +64,7 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 			} else {
 				errmsg = dfe.DefaultMsg
 			}
-			httpx.WriteJson(w, http.StatusOK, NewErrorResponse(errCode, errmsg))
+			httpx.WriteJson(w, statusCode, NewErrorResponse(errCode, errmsg))
 			logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
 			logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errreason)
 			return
@@ -102,7 +108,7 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 		logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
 		logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errreason)
 
-		httpx.WriteJson(w, http.StatusOK, NewErrorResponse(errCode, errmsg))
+		httpx.WriteJson(w, statusCode, NewErrorResponse(errCode, errmsg))
 	}
 }
 
@@ -134,5 +140,5 @@ func ParamErrorResult(r *http.Request, w http.ResponseWriter, err error) {
 	errMsg := fmt.Sprintf("%s, %s", msg, err.Error())
 	logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
 	logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errMsg)
-	httpx.WriteJson(w, http.StatusBadRequest, NewErrorResponse(errorx.ErrCodeRequestParams, errMsg))
+	httpx.WriteJson(w, statusCode, NewErrorResponse(errorx.ErrCodeRequestParams, errMsg))
 }
