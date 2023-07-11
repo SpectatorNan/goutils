@@ -29,7 +29,7 @@ require (
 	golang.org/x/crypto v0.10.0
 	golang.org/x/text v0.10.0
 	google.golang.org/grpc v1.56.2
-	gorm.io/gorm v1.25.1
+	gorm.io/gorm v1.25.2
 )
 
 require (
