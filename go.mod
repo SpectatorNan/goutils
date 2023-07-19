@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/SpectatorNan/go-zero-i18n v0.1.0
-	github.com/SpectatorNan/gorm-zero v1.1.1
+	github.com/SpectatorNan/gorm-zero v1.1.2
 	github.com/alibabacloud-go/darabonba-openapi v0.2.1
 	github.com/alibabacloud-go/dysmsapi-20170525/v2 v2.0.18
 	github.com/alibabacloud-go/tea v1.2.0
@@ -98,7 +98,7 @@ require (
 	go.opentelemetry.io/otel/sdk v1.14.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.19.0 // indirect
 	go.uber.org/automaxprocs v1.5.2 // indirect
-	golang.org/x/image v0.0.0-20190802002840-cff245a6509b // indirect
+	golang.org/x/image v0.0.0-20220302094943-723b81ca9867 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.9.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
