@@ -26,8 +26,8 @@ require (
 	github.com/ttacon/libphonenumber v1.2.1
 	github.com/zeromicro/go-zero v1.5.3
 	go.opentelemetry.io/otel/trace v1.16.0
-	golang.org/x/crypto v0.10.0
-	golang.org/x/text v0.10.0
+	golang.org/x/crypto v0.11.0
+	golang.org/x/text v0.11.0
 	google.golang.org/grpc v1.57.0
 	gorm.io/gorm v1.25.2
 )
@@ -100,7 +100,7 @@ require (
 	go.uber.org/automaxprocs v1.5.2 // indirect
 	golang.org/x/image v0.0.0-20220302094943-723b81ca9867 // indirect
 	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/sys v0.9.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/genproto v0.0.0-20230526161137-0005af68ea54 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230525234035-dd9d682886f9 // indirect
