@@ -9,7 +9,7 @@ require (
 	github.com/alibabacloud-go/dysmsapi-20170525/v2 v2.0.18
 	github.com/alibabacloud-go/tea v1.2.0
 	github.com/alibabacloud-go/tea-utils v1.4.5
-	github.com/aliyun/aliyun-oss-go-sdk v2.2.7+incompatible
+	github.com/aliyun/aliyun-oss-go-sdk v2.2.8+incompatible
 	github.com/casbin/casbin/v2 v2.72.1
 	github.com/casbin/gorm-adapter/v3 v3.17.0
 	github.com/go-playground/locales v0.14.1
