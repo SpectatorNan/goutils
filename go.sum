@@ -530,8 +530,8 @@ github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbt
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=
 github.com/Shopify/sarama v1.37.2/go.mod h1:Nxye/E+YPru//Bpaorfhc3JsSGYwCaDDj+R4bK52U5o=
 github.com/Shopify/toxiproxy/v2 v2.5.0/go.mod h1:yhM2epWtAmel9CB8r2+L+PCmhH6yH2pITaPAo7jxJl0=
-github.com/SpectatorNan/go-zero-i18n v0.1.0 h1:JdvgH9GFvwNGMK1N9rERd5W6TWk9XNJ9Z1eebJCQYaU=
-github.com/SpectatorNan/go-zero-i18n v0.1.0/go.mod h1:oL/ki7csd0oIrpLM0dHuYxAgUgSoGsNhNXgqsRJu7ik=
+github.com/SpectatorNan/go-zero-i18n v0.1.1 h1:F06aj+SiV9DqjOUrkjbqSHwf6F5ZqctfFUXxBweJxX4=
+github.com/SpectatorNan/go-zero-i18n v0.1.1/go.mod h1:oL/ki7csd0oIrpLM0dHuYxAgUgSoGsNhNXgqsRJu7ik=
 github.com/SpectatorNan/gorm-zero v1.1.2 h1:UfeDSaX/HMyTenmx7owXQbyWk4Rm1Wb9I2sc7aqyZ2c=
 github.com/SpectatorNan/gorm-zero v1.1.2/go.mod h1:kNZK6XoCepQIMbvUdZ19sEb5Srr4J2golqP2qXjrDyM=
 github.com/ajstarks/deck v0.0.0-20200831202436-30c9fc6549a9/go.mod h1:JynElWSGnm/4RlzPXRlREEwqTHAN3T56Bv2ITsFT3gY=
