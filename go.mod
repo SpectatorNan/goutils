@@ -3,7 +3,7 @@ module github.com/SpectatorNan/goutils
 go 1.18
 
 require (
-	github.com/SpectatorNan/go-zero-i18n v0.1.0
+	github.com/SpectatorNan/go-zero-i18n v0.1.1
 	github.com/SpectatorNan/gorm-zero v1.1.2
 	github.com/alibabacloud-go/darabonba-openapi v0.2.1
 	github.com/alibabacloud-go/dysmsapi-20170525/v2 v2.0.18
