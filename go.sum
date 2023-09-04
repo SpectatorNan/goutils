@@ -534,6 +534,7 @@ github.com/SpectatorNan/go-zero-i18n v0.1.1 h1:F06aj+SiV9DqjOUrkjbqSHwf6F5ZqctfF
 github.com/SpectatorNan/go-zero-i18n v0.1.1/go.mod h1:oL/ki7csd0oIrpLM0dHuYxAgUgSoGsNhNXgqsRJu7ik=
 github.com/SpectatorNan/gorm-zero v1.1.2 h1:UfeDSaX/HMyTenmx7owXQbyWk4Rm1Wb9I2sc7aqyZ2c=
 github.com/SpectatorNan/gorm-zero v1.1.2/go.mod h1:kNZK6XoCepQIMbvUdZ19sEb5Srr4J2golqP2qXjrDyM=
+github.com/agiledragon/gomonkey/v2 v2.2.0 h1:QJWqpdEhGV/JJy70sZ/LDnhbSlMrqHAWHcNOjz1kyuI=
 github.com/ajstarks/deck v0.0.0-20200831202436-30c9fc6549a9/go.mod h1:JynElWSGnm/4RlzPXRlREEwqTHAN3T56Bv2ITsFT3gY=
 github.com/ajstarks/deck/generate v0.0.0-20210309230005-c3f852c02e19/go.mod h1:T13YZdzov6OU0A1+RfKZiZN9ca6VeKdBdyDV+BY97Tk=
 github.com/ajstarks/svgo v0.0.0-20180226025133-644b8db467af/go.mod h1:K08gAheRH3/J6wwsYMMT4xOr94bZjxIelGM0+d/wbFw=
@@ -597,8 +598,8 @@ github.com/boombuler/barcode v1.0.1/go.mod h1:paBWMcWSl3LHKBqUq+rly7CNSldXjb2rDl
 github.com/bufbuild/protocompile v0.4.0/go.mod h1:3v93+mbWn/v3xzN+31nwkJfrEpAUwp+BagBSZWx+TP8=
 github.com/casbin/casbin/v2 v2.77.1 h1:+H46VamJCTlmCPcb0N99Zaj4tSorfuvBh3v5lyGopeU=
 github.com/casbin/casbin/v2 v2.77.1/go.mod h1:mzGx0hYW9/ksOSpw3wNjk3NRAroq5VMFYUQ6G43iGPk=
-github.com/casbin/gorm-adapter/v3 v3.18.1 h1:M+l2EbmUkfvXc7ptbM+Bz+Jo3OZu4qNUmOYLp7KiNUM=
-github.com/casbin/gorm-adapter/v3 v3.18.1/go.mod h1:ekufPNBgVIQvv9JffVGsg7KUv4DjnevTh6AQnBNkoK8=
+github.com/casbin/gorm-adapter/v3 v3.19.0 h1:KFHD9h7lo3sWN6UTc33cY59ued+sP4T0UCNkd+slYWI=
+github.com/casbin/gorm-adapter/v3 v3.19.0/go.mod h1:pvTTuyP2Es8VPHLyUssGtvOb3ETYD2tG7TfT5K8X2Sg=
 github.com/cenkalti/backoff/v4 v4.2.0 h1:HN5dHm3WBOgndBH6E8V0q2jIYIR3s9yglV8k/+MN3u4=
 github.com/cenkalti/backoff/v4 v4.2.0/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
