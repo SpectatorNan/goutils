@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// CreateTimeRange
+// TimeRange
 // example: db.Scopes(gormx.TimeRange(startTime, endTime))
 func TimeRange(startTime, endTime *time.Time) func(db *gorm.DB) *gorm.DB {
 	return TimeRangeByTable("", startTime, endTime)
