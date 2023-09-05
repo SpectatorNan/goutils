@@ -7,13 +7,29 @@ import (
 	"time"
 )
 
-func CreateTimeRange(startTime, endTime *time.Time) func(db *gorm.DB) *gorm.DB {
+// CreateTimeRange
+// example: db.Scopes(gormx.TimeRange(startTime, endTime))
+func TimeRange(startTime, endTime *time.Time) func(db *gorm.DB) *gorm.DB {
+	return TimeRangeByTable("", startTime, endTime)
+}
+
+// TimeRangeByTable
+// example: db.Scopes(gormx.TimeRangeByTable("tableName", startTime, endTime))
+func TimeRangeByTable(tableName string, startTime, endTime *time.Time) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if startTime != nil {
-			db = db.Where("created_at >= ?", *startTime)
+			sql := "created_at >= ?"
+			if len(tableName) > 0 {
+				sql = tableName + "." + sql
+			}
+			db = db.Where(sql, *startTime)
 		}
 		if endTime != nil {
-			db = db.Where("created_at <= ?", *endTime)
+			sql := "created_at <= ?"
+			if len(tableName) > 0 {
+				sql = tableName + "." + sql
+			}
+			db = db.Where(sql, *endTime)
 		}
 		return db
 	}
