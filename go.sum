@@ -598,8 +598,8 @@ github.com/boombuler/barcode v1.0.1/go.mod h1:paBWMcWSl3LHKBqUq+rly7CNSldXjb2rDl
 github.com/bufbuild/protocompile v0.4.0/go.mod h1:3v93+mbWn/v3xzN+31nwkJfrEpAUwp+BagBSZWx+TP8=
 github.com/casbin/casbin/v2 v2.77.1 h1:+H46VamJCTlmCPcb0N99Zaj4tSorfuvBh3v5lyGopeU=
 github.com/casbin/casbin/v2 v2.77.1/go.mod h1:mzGx0hYW9/ksOSpw3wNjk3NRAroq5VMFYUQ6G43iGPk=
-github.com/casbin/gorm-adapter/v3 v3.19.0 h1:KFHD9h7lo3sWN6UTc33cY59ued+sP4T0UCNkd+slYWI=
-github.com/casbin/gorm-adapter/v3 v3.19.0/go.mod h1:pvTTuyP2Es8VPHLyUssGtvOb3ETYD2tG7TfT5K8X2Sg=
+github.com/casbin/gorm-adapter/v3 v3.20.0 h1:VpGKTlL56xIkhNUOC07bnzwjA/xqfVOAbkt6sniVxMo=
+github.com/casbin/gorm-adapter/v3 v3.20.0/go.mod h1:pvTTuyP2Es8VPHLyUssGtvOb3ETYD2tG7TfT5K8X2Sg=
 github.com/cenkalti/backoff/v4 v4.2.0 h1:HN5dHm3WBOgndBH6E8V0q2jIYIR3s9yglV8k/+MN3u4=
 github.com/cenkalti/backoff/v4 v4.2.0/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
