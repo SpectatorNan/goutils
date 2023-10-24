@@ -7,6 +7,10 @@ type Response struct {
 	Reason  string      `json:"reason,omitempty"`
 }
 
+func (resp Response) Error() string {
+	return resp.Message
+}
+
 func NewSuccessEmptyResponse() *Response {
 	return &Response{
 		Code:    200,
