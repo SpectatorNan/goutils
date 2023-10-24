@@ -68,40 +68,15 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 			logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
 			logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errreason)
 			return
-		} else {
-			if gstatus, ok := status.FromError(causeErr); ok { // grpc err错误
-				grpcCode := uint32(gstatus.Code())
-				if grpcCode != errorx.ErrCodeDefault {
-					// grpc err
-					// must add interceptors in grpc server, like this:
-					// s.AddUnaryInterceptors(interceptor.LoggerInterceptor)
-					errCode = grpcCode
-					errmsg = gstatus.Message()
-					/*
-						var ice errorx.I18nCodeError
-						var ce errorx.CodeError
-						if err := jsonx.Unmarshal([]byte(errmsg), &ice); err == nil {
-							errmsg = goi18nx.FormatText(ctx, ice.MsgKey, ice.DefaultMsg)
-							errCode = ice.Code
-						} else if err := jsonx.Unmarshal([]byte(errmsg), &ce); err == nil {
-							if ce.Code != dfe.Code {
-								errmsg = ce.Message
-								if len(ce.Reason) > 0 {
-									errreason = ce.Reason
-								}
-							} else {
-								errmsg = ce.Message
-							}
-						} else {
-							errCode = errorx.ErrCodeDefault
-							if isHasI18n(ctx) {
-								errmsg = goi18nx.FormatText(ctx, errorx.ErrMsgI18nKey, errorx.ErrMsgDefault)
-							} else {
-								errmsg = errorx.ErrMsgDefault
-							}
-						}
-					*/
-				}
+		} else if gstatus, ok := status.FromError(causeErr); ok { // grpc err错误
+			grpcCode := uint32(gstatus.Code())
+			if grpcCode != errorx.ErrCodeDefault {
+				// grpc err
+				// must add interceptors in grpc server, like this:
+				// s.AddUnaryInterceptors(interceptor.LoggerInterceptor)
+				errCode = grpcCode
+				errmsg = gstatus.Message()
+					
 			}
 		}
 
