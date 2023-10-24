@@ -39,7 +39,7 @@ func (s *redisStore) Get(id string, clear bool) (value string) {
 		return
 	}
 	if clear {
-		s.redis.Del(cacheKey)
+		_, _ = s.redis.Del(cacheKey)
 	}
 	return
 }
