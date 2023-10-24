@@ -3,7 +3,7 @@ module github.com/SpectatorNan/goutils
 go 1.18
 
 require (
-	github.com/SpectatorNan/go-zero-i18n v0.1.1
+	github.com/SpectatorNan/go-zero-i18n v0.1.2
 	github.com/SpectatorNan/gorm-zero v1.1.2
 	github.com/alibabacloud-go/darabonba-openapi v0.2.1
 	github.com/alibabacloud-go/dysmsapi-20170525/v2 v2.0.18
@@ -32,7 +32,7 @@ require (
 )
 
 require (
-	github.com/BurntSushi/toml v1.1.0 // indirect
+	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.4 // indirect
 	github.com/alibabacloud-go/debug v0.0.0-20190504072949-9472017b5c68 // indirect
