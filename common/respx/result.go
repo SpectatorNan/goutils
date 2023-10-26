@@ -1,7 +1,6 @@
 package respx
 
 import (
-	"context"
 	"fmt"
 	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
 	"github.com/SpectatorNan/goutils/common/errorx"
@@ -50,7 +49,7 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 				errmsg = e.Message
 			}
 		} else if e, ok := causeErr.(*errorx.I18nCodeError); ok {
-			if isHasI18n(ctx) {
+			if goi18nx.IsHasI18n(ctx) {
 				errmsg = goi18nx.FormatText(ctx, e.MsgKey, e.DefaultMsg)
 			} else {
 				errmsg = dfe.DefaultMsg
@@ -59,7 +58,7 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 		} else if err == gorm.ErrRecordNotFound {
 			dfe = errorx.NotFoundResourceErr
 			errCode = dfe.Code
-			if isHasI18n(ctx) {
+			if goi18nx.IsHasI18n(ctx) {
 				errmsg = goi18nx.FormatText(ctx, dfe.MsgKey, dfe.DefaultMsg)
 			} else {
 				errmsg = dfe.DefaultMsg
@@ -76,7 +75,7 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 				// s.AddUnaryInterceptors(interceptor.LoggerInterceptor)
 				errCode = grpcCode
 				errmsg = gstatus.Message()
-					
+
 			}
 		}
 
@@ -86,27 +85,6 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 		httpx.WriteJson(w, statusCode, NewErrorResponse(errCode, errmsg))
 	}
 }
-
-func isHasI18n(ctx context.Context) bool {
-	v := ctx.Value(goi18nx.I18nKey)
-	if v != nil {
-		return true
-	}
-	return false
-}
-
-//func ErrHandle(err error) (int, interface{}) {
-//	switch e := err.(type) {
-//	case *errorx.CodeError:
-//		return http.StatusOK, NewErrorResponse(e.Code, e.Message)
-//	default:
-//		st, ok := status.FromError(err)
-//		if ok {
-//			return http.StatusOK, NewErrorResponse(uint32(st.Code()), st.Message())
-//		}
-//		return http.StatusOK, NewErrorReasonResponse(errorx.DEFAULT_ERROR, errorx.MapErrMsgKey(errorx.DEFAULT_ERROR), err.Error())
-//	}
-//}
 
 //http 参数错误返回
 func ParamErrorResult(r *http.Request, w http.ResponseWriter, err error) {

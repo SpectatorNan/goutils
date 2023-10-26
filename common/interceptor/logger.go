@@ -2,6 +2,7 @@ package interceptor
 
 import (
 	"context"
+	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
 	"github.com/SpectatorNan/goutils/common/errorx"
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -14,21 +15,21 @@ func LoggerInterceptor(ctx context.Context, req interface{}, info *grpc.UnarySer
 
 	resp, err = handler(ctx, req)
 	if err != nil {
-		causeErr := errors.Cause(err)                  // err类型
-		if e, ok := causeErr.(*errorx.CodeError); ok { //自定义错误类型
-			logx.WithContext(ctx).Errorf("【RPC-SRV-ERR】 %+v, reason: %v", e, e.Reason)
-
-			//转成grpc err
-			if e.Code < 1000 {
-				err = status.Error(codes.Code(errorx.ErrCodeDefault), e.Message)
-			} else {
-				err = status.Error(codes.Code(e.Code), e.Message)
+		causeErr := errors.Cause(err)
+		switch causeErr.(type) {
+		case *errorx.I18nCodeError:
+			serr := causeErr.(*errorx.I18nCodeError)
+			msg := serr.DefaultMsg
+			if goi18nx.IsHasI18n(ctx) {
+				msg = goi18nx.FormatText(ctx, serr.MsgKey, serr.DefaultMsg)
 			}
+			err = status.Error(codes.Code(serr.Code), msg)
+		case *errorx.CodeError:
+			serr := causeErr.(*errorx.CodeError)
+			err = status.Error(codes.Code(serr.Code), serr.Message)
 
-		} else {
-			logx.WithContext(ctx).Errorf("【RPC-SRV-ERR】 %+v", err)
 		}
-
+		logx.WithContext(ctx).Errorf("【RPC-SRV-ERR】 %+v", err)
 	}
 
 	return resp, err
