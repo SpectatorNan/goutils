@@ -1,19 +1,7 @@
 package validator
 
 import (
-	"fmt"
-	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
-	language2 "github.com/SpectatorNan/goutils/common/language"
-	"github.com/go-playground/locales/en"
-	"github.com/go-playground/locales/es"
-	"github.com/go-playground/locales/zh"
-	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
-	entrans "github.com/go-playground/validator/v10/translations/en"
-	estrans "github.com/go-playground/validator/v10/translations/es"
-	zhtrans "github.com/go-playground/validator/v10/translations/zh"
-	"golang.org/x/text/language"
-	"net/http"
 )
 
 const I18nKey = "SpectatorNan/validate/i18n"
@@ -42,22 +30,9 @@ func removeStructName(fields map[string]string) []string {
 
 	return errs //strings.Join(errs, ", ")
 }
-
+/*
 func generateValidate(r *http.Request) (*validator.Validate, ut.Translator) {
-	//accept := r.Header.Get("Accept-Language")
-	//langTags, _, err := language.ParseAcceptLanguage(accept)
-	//if err != nil {
-	//	langTags = []language.Tag{language.English}
-	//}
-	//tags := []language.Tag{
-	//	language.English,
-	//	language.Spanish,
-	//	language.Chinese,
-	//}
-	//var matcher = language.NewMatcher(tags)
-	//_, i, _ := matcher.Match(langTags...)
-	////_, i := language.MatchStrings(matcher, langTag.String())
-	//tag := tags[i]
+
 	tag := language2.GetLanguageTag(r)
 	en := en.New() //EnglishTrans
 	zh := zh.New() //ChineseTrans
@@ -108,3 +83,4 @@ func generateValidate(r *http.Request) (*validator.Validate, ut.Translator) {
 	}
 	return validate, trans
 }
+*/
