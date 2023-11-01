@@ -21,7 +21,7 @@ require (
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/mojocn/base64Captcha v1.3.5
 	github.com/pkg/errors v0.9.1
-	github.com/redis/go-redis/v9 v9.2.1
+	github.com/redis/go-redis/v9 v9.3.0
 	github.com/thinkeridea/go-extend v1.3.2
 	github.com/ttacon/libphonenumber v1.2.1
 	github.com/zeromicro/go-zero v1.5.6
