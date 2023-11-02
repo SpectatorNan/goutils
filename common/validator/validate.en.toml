@@ -1,0 +1,17 @@
+[[TagTrans]]
+Tag = "eqfield"
+Template = "{0} must be equal to {1}"
+    [[TagTrans.Params]]
+        Prefix = "Parameters"
+        ObjName = "StructField"
+    [[TagTrans.Params]]
+        Prefix = "Parameters"
+        ObjName = "Param"
+
+
+[[TagTrans]]
+Tag = "jwt"
+Template = "{0} is incorrect"
+    [[TagTrans.Params]]
+        Prefix = "Parameters"
+        ObjName = "StructField"

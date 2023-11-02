@@ -58,14 +58,6 @@ func TestValidateErr(t *testing.T) {
 	}
 }
 
-//func removeStructName(fields map[string]string) map[string]string {
-//	result := map[string]string{}
-//
-//	for field, err := range fields {
-//		result[field[strings.Index(field, ".")+1:]] = err
-//	}
-//	return result
-//}
 
 func TestGetLanguage1(t *testing.T) {
 	accept := "zh-CN,zh;q=0.9"

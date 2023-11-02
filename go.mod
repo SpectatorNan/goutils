@@ -1,8 +1,9 @@
 module github.com/SpectatorNan/goutils
 
-go 1.18
+go 1.19
 
 require (
+	github.com/BurntSushi/toml v1.3.2
 	github.com/SpectatorNan/go-zero-i18n v0.1.3
 	github.com/SpectatorNan/gorm-zero v1.1.2
 	github.com/alibabacloud-go/darabonba-openapi v0.2.1
@@ -29,11 +30,11 @@ require (
 	golang.org/x/crypto v0.14.0
 	golang.org/x/text v0.13.0
 	google.golang.org/grpc v1.59.0
+	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/gorm v1.25.5
 )
 
 require (
-	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.4 // indirect
 	github.com/alibabacloud-go/debug v0.0.0-20190504072949-9472017b5c68 // indirect

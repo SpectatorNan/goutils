@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-type TranslateFunc func(r *http.Request, validate *validator.Validate, trans ut.Translator, lang language.Tag) (*validator.Validate)
+type TranslateFunc func(r *http.Request, validate *validator.Validate, trans ut.Translator, lang language.Tag, bundle *Bundle) *validator.Validate
 type RegisterTagFunc func(r *http.Request, validate *validator.Validate)
 
 type Middleware struct {
@@ -16,31 +16,37 @@ type Middleware struct {
 	localizationFiles []string
 	translateFunc     TranslateFunc
 	registerTagFunc   []RegisterTagFunc
-	defaultTranslator locales.Translator
-	localTranslator   []locales.Translator
+	uniTranslator *ut.UniversalTranslator
+	bundle        *Bundle
 }
 
 func NewDefaultMiddleware() *Middleware {
-	return &Middleware{
-	}
+	return &Middleware{}
 }
 
 func NewMiddlewareWithLocalization(supportTags []language.Tag, localizationFiles []string, translateFunc TranslateFunc,
-	 defaultTranslator locales.Translator, localTranslator   []locales.Translator, registerTagFunc []RegisterTagFunc) *Middleware {
-	return &Middleware{
+	defaultTranslator locales.Translator, localTranslator []locales.Translator, registerTagFunc []RegisterTagFunc,
+	unmarshalFormat string, unmarshalFunc UnmarshalFunc) *Middleware {
+	uni := ut.New(defaultTranslator, localTranslator...)
+	m := &Middleware{
 		supportTags:       supportTags,
 		localizationFiles: localizationFiles,
 		translateFunc:     translateFunc,
 		registerTagFunc:   registerTagFunc,
-		defaultTranslator: defaultTranslator,
-		localTranslator:   localTranslator,
+		uniTranslator: uni,
 	}
+	if len(m.supportTags) > 0 {
+		defLangTag := m.supportTags[0]
+		bundle := NewBundleWithTemplatePaths(defLangTag, unmarshalFormat, unmarshalFunc, m.localizationFiles...)
+		m.bundle = bundle
+	}
+	return m
 }
 
 func (m *Middleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-			r2 := m.withRequest(r)
-			next(w, r2)
+		r2 := m.withRequest(r)
+		next(w, r2)
 	}
 }
 
@@ -49,6 +55,10 @@ func (m *Middleware) isHasI18n() bool {
 }
 
 func WithTranslateFunc(m *Middleware, translateFunc TranslateFunc) *Middleware {
-		m.translateFunc = translateFunc
-		return m
+	m.translateFunc = translateFunc
+	return m
+}
+
+func WithBundleVariableNameHandler(m *Middleware,f VariableNameHandlerFunc) {
+	m.bundle.SetVariableNameHandlerFunc(f)
 }

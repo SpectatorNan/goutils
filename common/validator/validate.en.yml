@@ -1,0 +1,13 @@
+TagTrans:
+  - Tag: "eqfield"
+    Template: "{0} must be equal to {1}"
+    Params:
+      - Prefix: "Parameters"
+        ObjName: "StructField"
+      - Prefix: "Parameters"
+        ObjName: "Param"
+  - Tag: "jwt"
+    Template: "{0} must be a valid JWT"
+    Params:
+      - Prefix: "Parameters"
+        ObjName: "StructField"
