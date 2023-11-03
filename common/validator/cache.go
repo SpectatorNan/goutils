@@ -13,30 +13,38 @@ import (
 func (m *Middleware) withRequest(r *http.Request) *http.Request {
 	validate := validator.New()
 	deTrans, _ := ut.New(en.New()).GetTranslator(language.English.String())
+
+	if m.isHasI18n() {
+		lang := r.Header.Get(defaultLangHeaderKey)
+		langTag := m.fetchCurrentLanguageTag(lang)
+
+		// uni only init once, has bug, only first translator is valid
+		//trans, _ := m.uniTranslator.GetTranslator(langTag.String())
+
+		//uni := ut.New(zh.New(), zh.New(), en.New())
+		//trans, _ := uni.GetTranslator(langTag.String())
+		deTrans, _ = ut.New(m.defaultTranslator, m.localTranslator...).GetTranslator(langTag.String())
+		if m.translateFunc != nil {
+			validate = m.translateFunc(r, validate, deTrans, langTag, m.bundle)
+		} else {
+			logx.Errorf("translateFunc is nil, must be set <RegisterDefaultTranslations> by language tag")
+			return r
+		}
+
+		if tempMap := m.bundle.GetTemplateByLanguageTag(langTag); tempMap != nil {
+			for tag, temp := range tempMap {
+				_ = validate.RegisterTranslation(tag, deTrans, temp.RegisterTranslation, TranslationFunc(r, m.bundle, temp))
+			}
+		}
+		if fn := m.registerTagFunc; fn != nil {
+			fn(r, validate)
+		}
+	}
 	// default validator
 	v := Validator{
 		validate: validate,
 		trans:    deTrans,
 	}
-
-	if m.isHasI18n() {
-		lang := r.Header.Get(defaultLangHeaderKey)
-		langTag := m.fetchCurrentLanguageTag(lang)
-		//uni := ut.New(m.defaultTranslator, m.localTranslator...)
-		trans, _ := m.uniTranslator.GetTranslator(langTag.String())
-		v.trans = trans
-		if m.translateFunc != nil {
-			validate = m.translateFunc(r, validate, trans, langTag, m.bundle)
-			v.validate = validate
-		} else {
-			logx.Errorf("translateFunc is nil, must be set <RegisterDefaultTranslations> by language tag")
-			return r
-		}
-		for _, fn := range m.registerTagFunc {
-			fn(r, validate)
-		}
-	}
-
 	return r.WithContext(context.WithValue(r.Context(), I18nKey, &v))
 }
 

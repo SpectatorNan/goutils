@@ -11,7 +11,7 @@ type UnmarshalFunc func(data []byte, v interface{}) error
 type VariableNameHandlerFunc func(r *http.Request, msgId, fieldName string) string
 
 type Bundle struct {
-	defaultLanguage         language.Tag
+	//defaultLanguage         language.Tag
 	unmarshalFuncs          map[string]UnmarshalFunc
 	messageTemplates        map[language.Tag]map[string]*Translate
 	tags                    []language.Tag
@@ -20,14 +20,14 @@ type Bundle struct {
 }
 
 // NewBundle returns a bundle with a default language.
-func NewBundle(defaultLanguage language.Tag) *Bundle {
+func NewBundle() *Bundle {
 	return &Bundle{
-		defaultLanguage: defaultLanguage,
+		//defaultLanguage: defaultLanguage,
 	}
 }
 
-func NewBundleWithTemplatePaths(defaultLanguage language.Tag, unmarshalFormat string, unmarshalFunc UnmarshalFunc, templatePaths ...string) *Bundle {
-	bundle := NewBundle(defaultLanguage)
+func NewBundleWithTemplatePaths(unmarshalFormat string, unmarshalFunc UnmarshalFunc, templatePaths ...string) *Bundle {
+	bundle := NewBundle()
 	bundle.RegisterUnmarshalFunc(unmarshalFormat, unmarshalFunc)
 	for _, path := range templatePaths {
 		if e := bundle.LoadFile(path); e != nil {
