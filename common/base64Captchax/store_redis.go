@@ -25,7 +25,7 @@ func NewRedisStore(redis *redis.Redis, expiration int, prefix string) base64Capt
 }
 
 func (s *redisStore) Set(id string, value string) error {
-	cacheKey := fmt.Sprintf("%s%s%v", cacheKeyCaptchaIdPrefix, s.prefix, id)
+	cacheKey := s.generateKey(id)
 	return s.redis.Setex(cacheKey, value, s.expiration)
 }
 func (s *redisStore) Verify(id, answer string, clear bool) bool {
@@ -33,7 +33,7 @@ func (s *redisStore) Verify(id, answer string, clear bool) bool {
 	return v == answer
 }
 func (s *redisStore) Get(id string, clear bool) (value string) {
-	cacheKey := fmt.Sprintf("%s%s%v", cacheKeyCaptchaIdPrefix, s.prefix, id)
+	cacheKey := s.generateKey(id)
 	value, err := s.redis.Get(cacheKey)
 	if err != nil {
 		return
@@ -42,4 +42,8 @@ func (s *redisStore) Get(id string, clear bool) (value string) {
 		_, _ = s.redis.Del(cacheKey)
 	}
 	return
+}
+
+func (s *redisStore) generateKey(id string) string {
+	return fmt.Sprintf("%s%s%v", s.prefix, cacheKeyCaptchaIdPrefix, id)
 }
