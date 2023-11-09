@@ -86,7 +86,7 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 	}
 }
 
-//http 参数错误返回
+// http 参数错误返回
 func ParamErrorResult(r *http.Request, w http.ResponseWriter, err error) {
 	dfe := errorx.RequestParamsErr
 	msg := goi18nx.FormatText(r.Context(), dfe.MsgKey, dfe.DefaultMsg)
