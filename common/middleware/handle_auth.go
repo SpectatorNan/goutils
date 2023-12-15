@@ -73,7 +73,7 @@ func DetailAuthLog(r *http.Request, reason string) {
 }
 
 func CheckLogin[T jwtx.BaseClaim](w http.ResponseWriter, r *http.Request,
-	checkBlackFn func(authorization string) bool, fetchSaltFn func(userId int64) ([]byte, error)) (*jwtx.CustomClaims[T], context.Context, bool) {
+	checkBlackFn func(authorization string) bool, fetchSaltFn func(bClaim T) ([]byte, error)) (*jwtx.CustomClaims[T], context.Context, bool) {
 	authorization := r.Header.Get("Authorization")
 	if len(authorization) < 1 {
 		Unauthorized(w, r, nil)
@@ -85,7 +85,7 @@ func CheckLogin[T jwtx.BaseClaim](w http.ResponseWriter, r *http.Request,
 	}
 	var claim jwtx.CustomClaims[T]
 	tok, err := jwtv4.ParseWithClaims(authorization, &claim, func(t *jwtv4.Token) (interface{}, error) {
-		return fetchSaltFn(claim.BaseClaims.GetUserId())
+		return fetchSaltFn(claim.BaseClaims)
 	})
 	//tok, err := parser.ParseToken(r, m.secret, "")
 	if err != nil {

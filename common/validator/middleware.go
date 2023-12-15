@@ -13,6 +13,16 @@ import (
 type TranslateFunc func(r *http.Request, validate *validator.Validate, trans ut.Translator, lang language.Tag, bundle *Bundle) *validator.Validate
 type RegisterTagFunc func(r *http.Request, validate *validator.Validate)
 
+type ILocales interface {
+	GetDefaultTranslator() locales.Translator
+	GetSupportTranslators() []locales.Translator
+	GetTranslateFunc() TranslateFunc
+	GetRegisterTagFunc() RegisterTagFunc
+	GetUnmarshal() (string, UnmarshalFunc)
+	//VariableNameHandler(r *http.Request, msgId, fieldName string) string
+	VariableNameHandler() VariableNameHandlerFunc
+}
+
 type Middleware struct {
 	//supportTags       []language.Tag
 	localizationFiles []string
@@ -26,6 +36,23 @@ type Middleware struct {
 
 func NewDefaultMiddleware() *Middleware {
 	return &Middleware{}
+}
+
+func NewMiddlewareWithILocales(localizationFiles []string, iLocales ILocales) *Middleware {
+	m := &Middleware{
+		localizationFiles: localizationFiles,
+		translateFunc:     iLocales.GetTranslateFunc(),
+		registerTagFunc:   iLocales.GetRegisterTagFunc(),
+		defaultTranslator: iLocales.GetDefaultTranslator(),
+		localTranslator:   iLocales.GetSupportTranslators(),
+	}
+	if len(m.localizationFiles) > 0 {
+		format, unmarshalFunc := iLocales.GetUnmarshal()
+		bundle := NewBundleWithTemplatePaths(format, unmarshalFunc, m.localizationFiles...)
+		bundle.SetVariableNameHandlerFunc(iLocales.VariableNameHandler())
+		m.bundle = bundle 
+	}
+	return m
 }
 
 func NewMiddlewareWithLocalization(localizationFiles []string, translateFunc TranslateFunc,

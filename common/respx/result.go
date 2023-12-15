@@ -79,8 +79,8 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 			}
 		}
 
-		logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
 		logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errreason)
+		logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
 
 		httpx.WriteJson(w, statusCode, NewErrorResponse(errCode, errmsg))
 	}

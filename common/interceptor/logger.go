@@ -15,6 +15,7 @@ func LoggerInterceptor(ctx context.Context, req interface{}, info *grpc.UnarySer
 
 	resp, err = handler(ctx, req)
 	if err != nil {
+		logErr := err
 		causeErr := errors.Cause(err)
 		switch causeErr.(type) {
 		case *errorx.I18nCodeError:
@@ -30,7 +31,7 @@ func LoggerInterceptor(ctx context.Context, req interface{}, info *grpc.UnarySer
 		default:
 			err = status.Error(codes.Code(errorx.ErrCodeDefault), causeErr.Error())
 		}
-		logx.WithContext(ctx).Errorf("【RPC-SRV-ERR】 %+v", err)
+		logx.WithContext(ctx).Errorf("【RPC-SRV-ERR】 %+v", logErr)
 	}
 
 	return resp, err
