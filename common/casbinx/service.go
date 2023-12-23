@@ -73,7 +73,8 @@ func (s *Service) ClearCasbin(v int, p ...string) bool {
 	return ok
 }
 
-/**
+/*
+*
 casbin rule Persistence
 */
 var (

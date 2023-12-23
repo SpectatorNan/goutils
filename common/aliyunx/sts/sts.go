@@ -39,8 +39,8 @@ func NewStsClient(config StsConfig) *StsClient {
 }
 
 /*
-	@title 获取阿里STS授权认证
-	@ds		有效时长（秒） 0~3600秒
+@title 获取阿里STS授权认证
+@ds		有效时长（秒） 0~3600秒
 */
 func (cli *StsClient) GetALiSTSCredentials(ds int) (*STSCredentials, error) {
 

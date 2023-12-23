@@ -50,7 +50,7 @@ func NewMiddlewareWithILocales(localizationFiles []string, iLocales ILocales) *M
 		format, unmarshalFunc := iLocales.GetUnmarshal()
 		bundle := NewBundleWithTemplatePaths(format, unmarshalFunc, m.localizationFiles...)
 		bundle.SetVariableNameHandlerFunc(iLocales.VariableNameHandler())
-		m.bundle = bundle 
+		m.bundle = bundle
 	}
 	return m
 }

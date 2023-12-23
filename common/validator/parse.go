@@ -41,7 +41,7 @@ func parsePath(path string) (langTag, format string) {
 	return
 }
 
-func  parseFileBytes(buf []byte, path string, unmarshalFuncs map[string]UnmarshalFunc) (*FileInfo, error) {
+func parseFileBytes(buf []byte, path string, unmarshalFuncs map[string]UnmarshalFunc) (*FileInfo, error) {
 	lang, format := parsePath(path)
 	tag := language.Make(lang)
 	fileInfo := &FileInfo{

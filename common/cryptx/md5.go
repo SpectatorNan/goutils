@@ -23,7 +23,7 @@ func Md5ByBytes(b []byte) string {
 	return fmt.Sprintf("%x", md5.Sum(b))
 }
 
-//返回一个32位md5加密后的字符串
+// 返回一个32位md5加密后的字符串
 func GetMD5Encode(data string, salt *string) string {
 	h := md5.New()
 	h.Write([]byte(data))
@@ -33,7 +33,7 @@ func GetMD5Encode(data string, salt *string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-//返回一个16位md5加密后的字符串
+// 返回一个16位md5加密后的字符串
 func Get16MD5Encode(data string) string {
 	return GetMD5Encode(data, nil)[8:24]
 }

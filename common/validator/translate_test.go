@@ -12,7 +12,6 @@ import (
 	"testing"
 )
 
-
 func TestLoadToml(t *testing.T) {
 	unmarshalFuncMap := map[string]UnmarshalFunc{
 		"toml": toml.Unmarshal,

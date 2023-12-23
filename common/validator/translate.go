@@ -12,15 +12,14 @@ type translateFile struct {
 }
 
 type Translate struct {
-	Tag       string      `yaml:"Tag"`
-	Template  string      `yaml:"Template"`
-	Params []TranslateParams `yaml:"Params"`
+	Tag      string            `yaml:"Tag"`
+	Template string            `yaml:"Template"`
+	Params   []TranslateParams `yaml:"Params"`
 }
 type TranslateParams struct {
 	Prefix  string `yaml:"Prefix"`
 	ObjName string `yaml:"ObjName"`
 }
-
 
 func (t *Translate) RegisterTranslation(ut ut.Translator) error {
 	return ut.Add(t.Tag, t.Template, true)

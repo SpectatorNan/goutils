@@ -5,7 +5,6 @@ import (
 	"testing"
 )
 
-
 func TestSendAliSmsCode(t *testing.T) {
 
 	sms := NewAliyunSms("", "", TempConfig{

@@ -58,7 +58,6 @@ func TestValidateErr(t *testing.T) {
 	}
 }
 
-
 func TestGetLanguage1(t *testing.T) {
 	accept := "zh-CN,zh;q=0.9"
 	tag, q, err := language.ParseAcceptLanguage(accept)

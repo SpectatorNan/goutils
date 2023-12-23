@@ -6,10 +6,8 @@ import (
 )
 
 var (
-	//ErrLoginExpire = errors.New("login expired")
+//ErrLoginExpire = errors.New("login expired")
 )
-
-
 
 // forget feature ...
 func GetKeyValues(ctx context.Context) map[interface{}]interface{} {

@@ -7,7 +7,7 @@ import (
 )
 
 // 私钥生成
-//openssl genrsa -out rsa_private_key.pem 1024
+// openssl genrsa -out rsa_private_key.pem 1024
 var privateKey = []byte(`
 -----BEGIN RSA PRIVATE KEY-----
  
@@ -15,7 +15,7 @@ var privateKey = []byte(`
 `)
 
 // 公钥: 根据私钥生成
-//openssl rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem
+// openssl rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem
 var publicKey = []byte(`
 -----BEGIN PUBLIC KEY-----
  

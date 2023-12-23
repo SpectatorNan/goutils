@@ -13,7 +13,7 @@ type Config struct {
 	AccessKeyID     string
 	SecretAccessKey string
 	UseSSL          bool
-	Location string
+	Location        string
 }
 
 type Client struct {
@@ -47,9 +47,9 @@ func (c *Client) CreateBucket(ctx context.Context, bucketName string) error {
 
 	err := c.MinioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: c.location})
 	if err != nil {
-			return err
+		return err
 	}
-		return nil
+	return nil
 
 }
 
