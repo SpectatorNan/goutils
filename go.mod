@@ -5,7 +5,6 @@ go 1.19
 require (
 	github.com/BurntSushi/toml v1.3.2
 	github.com/SpectatorNan/go-zero-i18n v0.1.3
-	github.com/SpectatorNan/gorm-zero v1.1.3
 	github.com/alibabacloud-go/darabonba-openapi v0.2.1
 	github.com/alibabacloud-go/dysmsapi-20170525/v2 v2.0.18
 	github.com/alibabacloud-go/tea v1.2.0
@@ -21,7 +20,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/minio/minio-go/v7 v7.0.65
-	github.com/mojocn/base64Captcha v1.3.5
+	github.com/mojocn/base64Captcha v1.3.6
 	github.com/pkg/errors v0.9.1
 	github.com/redis/go-redis/v9 v9.3.1
 	github.com/thinkeridea/go-extend v1.3.2
@@ -80,6 +79,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/nicksnyder/go-i18n/v2 v2.2.1 // indirect
+	github.com/onsi/gomega v1.26.0 // indirect
 	github.com/openzipkin/zipkin-go v0.4.1 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
 	github.com/prometheus/client_golang v1.16.0 // indirect
@@ -103,7 +103,7 @@ require (
 	go.opentelemetry.io/otel/sdk v1.19.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.0.0 // indirect
 	go.uber.org/automaxprocs v1.5.3 // indirect
-	golang.org/x/image v0.0.0-20220302094943-723b81ca9867 // indirect
+	golang.org/x/image v0.13.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
