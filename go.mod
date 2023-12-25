@@ -27,7 +27,7 @@ require (
 	github.com/ttacon/libphonenumber v1.2.1
 	github.com/zeromicro/go-zero v1.5.6
 	go.opentelemetry.io/otel/trace v1.19.0
-	golang.org/x/crypto v0.16.0
+	golang.org/x/crypto v0.17.0
 	golang.org/x/text v0.14.0
 	google.golang.org/grpc v1.60.1
 	gopkg.in/yaml.v3 v3.0.1
