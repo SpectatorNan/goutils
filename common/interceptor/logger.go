@@ -29,7 +29,13 @@ func LoggerInterceptor(ctx context.Context, req interface{}, info *grpc.UnarySer
 			serr := causeErr.(*errorx.CodeError)
 			err = status.Error(codes.Code(serr.Code), serr.Message)
 		default:
-			err = status.Error(codes.Code(errorx.ErrCodeDefault), causeErr.Error())
+			st := status.Convert(causeErr)
+			if st.Code() != codes.Unknown {
+				// This is a gRPC error
+				err = causeErr
+			} else {
+				err = status.Error(codes.Code(errorx.ErrCodeDefault), causeErr.Error())
+			}
 		}
 		logx.WithContext(ctx).Errorf("【RPC-SRV-ERR】 %+v", logErr)
 	}

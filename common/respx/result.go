@@ -69,14 +69,13 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 			return
 		} else if gstatus, ok := status.FromError(causeErr); ok { // grpc err错误
 			grpcCode := uint32(gstatus.Code())
-			if grpcCode != errorx.ErrCodeDefault {
+			//if grpcCode != errorx.ErrCodeDefault {
 				// grpc err
 				// must add interceptors in grpc server, like this:
 				// s.AddUnaryInterceptors(interceptor.LoggerInterceptor)
 				errCode = grpcCode
 				errmsg = gstatus.Message()
-
-			}
+			//}
 		}
 
 		logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errreason)
