@@ -1,4 +1,4 @@
-package base64Captchax
+package go_redis
 
 import (
 	"github.com/mojocn/base64Captcha"
