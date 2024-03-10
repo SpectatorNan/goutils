@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	errCodeLoginExpire uint32 = 20106
+	errCodeLoginExpire uint32 = 401
 	loginExpireErr     error  = &errorx.I18nCodeError{Code: errCodeLoginExpire, MsgKey: "Users.LoginExpire", DefaultMsg: "Please login"}
 )
 
