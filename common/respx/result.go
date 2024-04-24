@@ -12,10 +12,16 @@ import (
 	"net/http"
 )
 
-var statusCode = http.StatusOK
+var errRequestStatusCode = http.StatusOK
 
-func SetStatusCode(code int) {
-	statusCode = code
+func SetErrStatusCode(code int) {
+	errRequestStatusCode = code
+}
+
+var okStatusCode = http.StatusOK
+
+func SetOkStatusCode(code int) {
+	okStatusCode = code
 }
 
 // HttpResult
@@ -27,7 +33,7 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 		//成功返回
 		rp := NewSuccessResponse(resp)
 		//w.Header().Add(projectConst.OperateLogResultHeaderKey, "ok")
-		httpx.WriteJson(w, statusCode, rp)
+		httpx.WriteJson(w, okStatusCode, rp)
 	} else {
 		//错误返回
 		dfe := errorx.DefaultErr
@@ -63,25 +69,25 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 			} else {
 				errmsg = dfe.DefaultMsg
 			}
-			httpx.WriteJson(w, statusCode, NewErrorResponse(errCode, errmsg))
+			httpx.WriteJson(w, errRequestStatusCode, NewErrorResponse(errCode, errmsg))
 			logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
 			logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errreason)
 			return
 		} else if gstatus, ok := status.FromError(causeErr); ok { // grpc err错误
 			grpcCode := uint32(gstatus.Code())
 			//if grpcCode != errorx.ErrCodeDefault {
-				// grpc err
-				// must add interceptors in grpc server, like this:
-				// s.AddUnaryInterceptors(interceptor.LoggerInterceptor)
-				errCode = grpcCode
-				errmsg = gstatus.Message()
+			// grpc err
+			// must add interceptors in grpc server, like this:
+			// s.AddUnaryInterceptors(interceptor.LoggerInterceptor)
+			errCode = grpcCode
+			errmsg = gstatus.Message()
 			//}
 		}
 
 		logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errreason)
 		logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
 
-		httpx.WriteJson(w, statusCode, NewErrorResponse(errCode, errmsg))
+		httpx.WriteJson(w, errRequestStatusCode, NewErrorResponse(errCode, errmsg))
 	}
 }
 
@@ -92,5 +98,5 @@ func ParamErrorResult(r *http.Request, w http.ResponseWriter, err error) {
 	errMsg := fmt.Sprintf("%s, %s", msg, err.Error())
 	logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
 	logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errMsg)
-	httpx.WriteJson(w, statusCode, NewErrorResponse(errorx.ErrCodeRequestParams, errMsg))
+	httpx.WriteJson(w, errRequestStatusCode, NewErrorResponse(errorx.ErrCodeRequestParams, errMsg))
 }

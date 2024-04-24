@@ -1,6 +1,8 @@
 module github.com/SpectatorNan/goutils
 
-go 1.19
+go 1.21
+
+toolchain go1.21.8
 
 require (
 	github.com/BurntSushi/toml v1.3.2
