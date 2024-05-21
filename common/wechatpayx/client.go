@@ -13,11 +13,11 @@ type client struct {
 	conf Conf
 }
 
-func NewClient(conf Conf) *client {
+func NewClient(conf Conf) PayClient {
 	return newClient(conf)
 }
 
-func newClient(conf Conf) *client {
+func newClient(conf Conf) PayClient {
 	return &client{conf: conf}
 }
 
