@@ -9,19 +9,19 @@ import (
 	"time"
 )
 
-type client struct {
+type jsClient struct {
 	conf Conf
 }
 
-func NewClient(conf Conf) PayClient {
-	return newClient(conf)
+func NewJsClient(conf Conf) JSPayClient {
+	return newJsClient(conf)
 }
 
-func newClient(conf Conf) PayClient {
-	return &client{conf: conf}
+func newJsClient(conf Conf) JSPayClient {
+	return &jsClient{conf: conf}
 }
 
-func (c *client) PrePay(ctx context.Context, desc, tradeNo string, price int64) (*jsapi.PrepayWithRequestPaymentResponse, error) {
+func (c *jsClient) PrePay(ctx context.Context, openId, desc, tradeNo string, price int64, validDuration time.Duration) (*JsPrepayResponse, error) {
 	// Pay logic
 
 	mchPrivateKey, err := wxpayv3_utils.LoadPrivateKeyWithPath(c.conf.CertPath)
@@ -46,11 +46,14 @@ func (c *client) PrePay(ctx context.Context, desc, tradeNo string, price int64) 
 			Mchid:       core.String(c.conf.MchId),
 			Description: core.String(desc),
 			OutTradeNo:  core.String(tradeNo),
-			TimeExpire:  core.Time(time.Now()),
+			TimeExpire:  core.Time(time.Now().Add(validDuration)),
 			NotifyUrl:   core.String(c.conf.NotifyUrl),
 			Amount: &jsapi.Amount{
 				Currency: core.String("CNY"),
 				Total:    core.Int64(price),
+			},
+			Payer: &jsapi.Payer{
+				Openid: core.String(openId),
 			},
 			//Detail: &native.Detail{
 			//	CostPrice: core.Int64(608800),
@@ -82,5 +85,13 @@ func (c *client) PrePay(ctx context.Context, desc, tradeNo string, price int64) 
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return &JsPrepayResponse{
+		PrepayId:  resp.PrepayId,
+		Appid:     resp.Appid,
+		TimeStamp: resp.TimeStamp,
+		NonceStr:  resp.NonceStr,
+		Package:   resp.Package,
+		SignType:  resp.SignType,
+		PaySign:   resp.PaySign,
+	}, nil
 }

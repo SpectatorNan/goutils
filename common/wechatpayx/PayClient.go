@@ -2,9 +2,13 @@ package wechatpayx
 
 import (
 	"context"
-	"github.com/wechatpay-apiv3/wechatpay-go/services/payments/jsapi"
+	"time"
 )
 
-type PayClient interface {
-	PrePay(ctx context.Context, desc, tradeNo string, price int64) (*jsapi.PrepayWithRequestPaymentResponse, error)
+type JSPayClient interface {
+	PrePay(ctx context.Context, openId, desc, tradeNo string, price int64, validDuration time.Duration) (*JsPrepayResponse, error)
+}
+
+type APPPayClient interface {
+	PrePay(ctx context.Context, desc, tradeNo string, price int64, validDuration time.Duration) (*AppPrepayResponse, error)
 }
