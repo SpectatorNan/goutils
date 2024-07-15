@@ -2,8 +2,6 @@ module github.com/SpectatorNan/goutils
 
 go 1.21
 
-toolchain go1.21.8
-
 require (
 	github.com/BurntSushi/toml v1.3.2
 	github.com/SpectatorNan/go-zero-i18n v0.1.3
