@@ -26,8 +26,8 @@ func getRefreshCacheKey(prefix, token string) string {
 	return redisKey
 }
 
-func CacheRefreshToken(ctx context.Context, redis *redis.Redis, prefix, token string, uid int64) error {  
-	redisKey := getRefreshCacheKey(prefix, token) 
+func CacheRefreshToken(ctx context.Context, redis *redis.Redis, prefix, token string, uid int64) error {
+	redisKey := getRefreshCacheKey(prefix, token)
 	return redis.SetexCtx(ctx, redisKey, fmt.Sprintf("%d", uid), 86400*7)
 }
 

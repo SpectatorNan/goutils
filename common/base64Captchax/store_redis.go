@@ -6,9 +6,7 @@ import (
 
 var (
 	cacheKeyCaptchaIdPrefix = "cache:captcha:id:"
-) 
-
-
+)
 
 func GenerateKey(prefix, id string) string {
 	return fmt.Sprintf("%s%s%v", prefix, cacheKeyCaptchaIdPrefix, id)
