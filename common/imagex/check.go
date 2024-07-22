@@ -7,6 +7,10 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"io"
+	"log"
+	"mime/multipart"
+	"net/http"
+	"strings"
 )
 
 func Decode(r io.Reader) (image.Config, string, error) {
@@ -38,4 +42,22 @@ func GetImageSize(r io.Reader) (image.Config, string, error) {
 		return config, "", err
 	}
 	return config, is, nil
+}
+
+// 检查文件是否为图片
+func isImageFile(file multipart.File) bool {
+	// 读取文件头的前512个字节以检查 MIME 类型
+	buffer := make([]byte, 512)
+	_, err := file.Read(buffer)
+	if err != nil {
+		log.Println("Error reading file:", err)
+		return false
+	}
+
+	// 将文件指针移回开头，以便后续处理文件时不会受影响
+	file.Seek(0, 0)
+
+	// 检测文件的 MIME 类型
+	mimeType := http.DetectContentType(buffer)
+	return strings.HasPrefix(mimeType, "image/")
 }

@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"mime/multipart"
+
+	"io"
 )
 
 type Config struct {
@@ -53,9 +54,9 @@ func (c *Client) CreateBucket(ctx context.Context, bucketName string) error {
 
 }
 
-func (c *Client) UploadFile(ctx context.Context, bucketName, objectName string, file multipart.File, fileStat *multipart.FileHeader) error {
+func (c *Client) UploadFile(ctx context.Context, bucketName, objectName string, file io.Reader, fileSize int64) error {
 
-	uploadInfo, err := c.MinioClient.PutObject(ctx, bucketName, objectName, file, fileStat.Size, minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	uploadInfo, err := c.MinioClient.PutObject(ctx, bucketName, objectName, file, fileSize, minio.PutObjectOptions{ContentType: "application/octet-stream"})
 	if err != nil {
 		return err
 	}
