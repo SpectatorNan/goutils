@@ -1,6 +1,7 @@
 package imagex
 
 import (
+	_ "golang.org/x/image/webp"
 	"image"
 	_ "image/gif"
 	_ "image/jpeg"
@@ -29,4 +30,12 @@ func CheckSupportImage(r io.Reader, supportTypes []string) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func GetImageSize(r io.Reader) (image.Config, string, error) {
+	config, is, err := image.DecodeConfig(r)
+	if err != nil {
+		return config, "", err
+	}
+	return config, is, nil
 }
