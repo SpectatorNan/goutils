@@ -24,6 +24,12 @@ func SetOkStatusCode(code int) {
 	okStatusCode = code
 }
 
+var debugMode = false
+
+func SetDebugMode(mode bool) {
+	debugMode = mode
+}
+
 // HttpResult
 func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err error) {
 
@@ -86,7 +92,9 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 
 		logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errreason)
 		logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
-
+		if debugMode {
+			errmsg = errreason
+		}
 		httpx.WriteJson(w, errRequestStatusCode, NewErrorResponse(errCode, errmsg))
 	}
 }
