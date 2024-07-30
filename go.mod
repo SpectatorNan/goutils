@@ -30,7 +30,7 @@ require (
 	github.com/zeromicro/go-zero v1.7.0
 	go.opentelemetry.io/otel/trace v1.24.0
 	golang.org/x/crypto v0.25.0
-	golang.org/x/image v0.13.0
+	golang.org/x/image v0.18.0
 	golang.org/x/text v0.16.0
 	google.golang.org/grpc v1.65.0
 	gopkg.in/yaml.v3 v3.0.1
