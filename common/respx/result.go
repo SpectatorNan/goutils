@@ -38,35 +38,37 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 
 		//成功返回
 		rp := NewSuccessResponse(resp)
-		//w.Header().Add(projectConst.OperateLogResultHeaderKey, "ok")
 		httpx.WriteJson(w, okStatusCode, rp)
 	} else {
 		//错误返回
 		dfe := errorx.DefaultErr
 		errCode := dfe.Code
 		errmsg := goi18nx.FormatText(ctx, dfe.MsgKey, dfe.DefaultMsg)
-		errreason := err.Error()
+		//errreason := err.Error()
 
-		causeErr := errors.Cause(err)                  // err类型
-		if e, ok := causeErr.(*errorx.CodeError); ok { //自定义错误类型
+		causeErr := errors.Cause(err)
+		var codeE *errorx.CodeError
+		var i18nE *errorx.I18nCodeError
+		// err类型
+
+		if errors.As(causeErr, &codeE) { //自定义错误类型
 			//自定义CodeError
-			if e.Code != dfe.Code {
-				errCode = e.Code
-				//errmsg = goi18nx.FormatText(ctx, errorx.MapErrMsgKey(errcode), e.Message)
-				errmsg = e.Message
-				if len(e.Reason) > 0 {
-					errreason = e.Reason
+			if codeE.Code != dfe.Code {
+				errCode = codeE.Code
+				errmsg = codeE.Message
+				if len(codeE.Reason) > 0 {
+					//errreason = codeE.Reason
 				}
 			} else {
-				errmsg = e.Message
+				errmsg = codeE.Message
 			}
-		} else if e, ok := causeErr.(*errorx.I18nCodeError); ok {
+		} else if errors.As(causeErr, &i18nE) { //自定义国际化错误类型
 			if goi18nx.IsHasI18n(ctx) {
-				errmsg = goi18nx.FormatText(ctx, e.MsgKey, e.DefaultMsg)
+				errmsg = goi18nx.FormatText(ctx, i18nE.MsgKey, i18nE.DefaultMsg)
 			} else {
 				errmsg = dfe.DefaultMsg
 			}
-			errCode = e.Code
+			errCode = i18nE.Code
 		} else if errors.Is(err, gorm.ErrRecordNotFound) {
 			dfe = errorx.NotFoundResourceErr
 			errCode = dfe.Code
@@ -76,24 +78,20 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 				errmsg = dfe.DefaultMsg
 			}
 			httpx.WriteJson(w, errRequestStatusCode, NewErrorResponse(errCode, errmsg))
-			//logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
-			logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errreason)
 			return
 		} else if gstatus, ok := status.FromError(causeErr); ok { // grpc err错误
 			grpcCode := uint32(gstatus.Code())
 			if grpcCode != errorx.ErrCodeDefault {
-				// grpc err
-				// must add interceptors in grpc server, like this:
-				// s.AddUnaryInterceptors(interceptor.LoggerInterceptor)
 				errCode = grpcCode
 				errmsg = gstatus.Message()
 			}
 		}
 
-		logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errreason)
-		//logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
+		//logx.WithContext(r.Context()).Errorf("【API-ERR】: %+v ", errreason)
+		logx.WithContext(r.Context()).Errorf("【API-ERR】 %+v ", err)
 		if debugMode {
-			errmsg = errreason
+			//errmsg = errreason
+			errmsg = err.Error()
 		}
 		httpx.WriteJson(w, errRequestStatusCode, NewErrorResponse(errCode, errmsg))
 	}
