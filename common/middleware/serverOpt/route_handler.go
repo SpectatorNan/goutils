@@ -1,29 +1,19 @@
-package middleware
+package serverOpt
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/SpectatorNan/goutils/common/errorx"
-	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
-	"github.com/zeromicro/go-zero/rest/httpx"
 	"net/http"
 	"time"
 )
-
-func JwtUnAuthorizedHandle() rest.RunOption {
-	return rest.WithUnauthorizedCallback(func(w http.ResponseWriter, r *http.Request, err error) {
-		logx.Info("===========jwt=WithUnauthorizedCallback=====================")
-		httpx.Error(w, errorx.NewErrCodeMsg(errCodeLoginExpire, "请登录"))
-	})
-}
 
 func RouteMethodNotAllow() rest.RunOption {
 	return rest.WithNotAllowedHandler(
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 			w.WriteHeader(http.StatusMethodNotAllowed)
-			w.Write(notAllowBytes(r))
+			_, _ = w.Write(notAllowBytes(r))
 		}),
 	)
 }

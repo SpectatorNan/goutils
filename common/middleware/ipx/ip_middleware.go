@@ -1,4 +1,4 @@
-package middleware
+package ipx
 
 import (
 	"context"

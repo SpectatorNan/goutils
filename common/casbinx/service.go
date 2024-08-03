@@ -54,7 +54,7 @@ func (s *Service) UpdateCasbinApi(ctx context.Context, oldPath string, newPath s
 // 获取权限列表
 func (s *Service) GetPolicyPathByAuthorityId(authorityId string) []Info {
 	e := s.casbin()
-	list := e.GetFilteredPolicy(0, authorityId)
+	list, _ := e.GetFilteredPolicy(0, authorityId)
 
 	pathMaps := make([]Info, 0)
 	for _, v := range list {

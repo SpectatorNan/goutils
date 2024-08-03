@@ -1,4 +1,4 @@
-package middleware
+package authx
 
 import (
 	"context"
@@ -17,7 +17,12 @@ import (
 var (
 	errCodeLoginExpire uint32 = 401
 	loginExpireErr     error  = &errorx.I18nCodeError{Code: errCodeLoginExpire, MsgKey: "Users.LoginExpire", DefaultMsg: "Please login"}
+	debugMode                 = false
 )
+
+func SetDebugMode(debug bool) {
+	debugMode = debug
+}
 
 func SetLoginExpireCode(code uint32) {
 	errCodeLoginExpire = code
@@ -35,10 +40,12 @@ func SetLoginExpireWithI18nErr(err *errorx.I18nCodeError) {
 
 func Unauthorized(w http.ResponseWriter, r *http.Request, err error) {
 
-	if err != nil {
-		DetailAuthLog(r, err.Error())
-	} else {
-		DetailAuthLog(r, noDetailReason)
+	if debugMode {
+		if err != nil {
+			DetailAuthLog(r, err.Error())
+		} else {
+			DetailAuthLog(r, noDetailReason)
+		}
 	}
 
 	// if user not setting HTTP header, we set header with 401
