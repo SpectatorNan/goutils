@@ -7,7 +7,7 @@ import (
 )
 
 func (c *OSSClient) UploadStreamByFile(ctx context.Context, bucketName string, key string, file multipart.File) error {
-	bucket, err := c.client.Bucket(bucketName)
+	bucket, err := c.getBucket(bucketName)
 	if err != nil {
 		return err
 	}
@@ -16,7 +16,7 @@ func (c *OSSClient) UploadStreamByFile(ctx context.Context, bucketName string, k
 }
 
 func (c *OSSClient) UploadStream(ctx context.Context, bucketName string, key string, stream io.Reader) error {
-	bucket, err := c.client.Bucket(bucketName)
+	bucket, err := c.getBucket(bucketName)
 	if err != nil {
 		return err
 	}

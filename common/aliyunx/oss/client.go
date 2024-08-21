@@ -19,3 +19,11 @@ func NewOSSClient(cfg Config) *OSSClient {
 	}
 	return &OSSClient{client: client}
 }
+
+func (c *OSSClient) getBucket(name string) (*oss.Bucket, error) {
+	bucket, err := c.client.Bucket(name)
+	if err != nil {
+		return nil, err
+	}
+	return bucket, err
+}

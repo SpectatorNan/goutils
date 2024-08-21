@@ -6,7 +6,7 @@ import (
 )
 
 func (c *OSSClient) DownloadStream(ctx context.Context, bucketName string, key string) ([]byte, error) {
-	bucket, err := c.client.Bucket(bucketName)
+	bucket, err := c.getBucket(bucketName)
 	if err != nil {
 		return nil, err
 	}
