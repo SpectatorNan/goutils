@@ -61,7 +61,7 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			builder.WriteString(" - %s")
 			args = append(args, body)
 		}
-		if m.timeOut > duration {
+		if m.timeOut < duration {
 			builder.WriteString(" - Timeout context deadline exceeded")
 			logger.Errorf(builder.String(), args...)
 		} else {
