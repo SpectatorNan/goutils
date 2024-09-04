@@ -1,4 +1,4 @@
-package serverOpt
+package restx
 
 import (
 	"encoding/json"
