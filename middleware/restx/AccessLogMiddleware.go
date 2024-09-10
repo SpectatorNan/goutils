@@ -3,6 +3,8 @@ package restx
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"github.com/tidwall/gjson"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/timex"
 	"io"
@@ -33,18 +35,29 @@ func (w *CustomResponseWriter) Header() http.Header {
 }
 
 type AccessLogMiddleware struct {
-	timeOut       time.Duration
-	logHeaderKeys map[string]struct{}
+	timeOut           time.Duration
+	logHeaderKeys     map[string]struct{}
+	limitResponseSize int
 }
 
-func NewAccessLogMiddleware(timeOut int64, headerKeys []string) *AccessLogMiddleware {
+type AccessLogOption func(m *AccessLogMiddleware)
+
+func NewAccessLogMiddleware(timeOut int64, headerKeys []string, opts ...AccessLogOption) *AccessLogMiddleware {
 	keys := make(map[string]struct{})
 	for _, key := range headerKeys {
 		keys[key] = struct{}{}
 	}
-	return &AccessLogMiddleware{timeOut: time.Duration(timeOut) * time.Millisecond, logHeaderKeys: keys}
+	m := &AccessLogMiddleware{timeOut: time.Duration(timeOut) * time.Millisecond, logHeaderKeys: keys, limitResponseSize: 512}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
 }
-
+func WithResponseLogSizeLimit(limit int) AccessLogOption {
+	return func(m *AccessLogMiddleware) {
+		m.limitResponseSize = limit
+	}
+}
 func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := timex.Now()
@@ -97,9 +110,18 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			args = append(args, body)
 		}
 
-		// Add response data to log
-		builder.WriteString(" - Response: %s")
-		args = append(args, crw.Body.String())
+		v := gjson.Get(crw.Body.String(), "data.page")
+		fmt.Println(v)
+		if v.Type == gjson.Null {
+			builder.WriteString(" - Response: %s")
+			args = append(args, crw.Body.String())
+		} else if m.limitResponseSize > 0 && len(crw.Body.Bytes()) > m.limitResponseSize {
+			builder.WriteString(" - Response: %s")
+			args = append(args, crw.Body.String()[:m.limitResponseSize])
+		} else {
+			builder.WriteString(" - Response: %s")
+			args = append(args, crw.Body.String())
+		}
 
 		if m.timeOut < duration {
 			builder.WriteString(" - Timeout context deadline exceeded")
@@ -109,7 +131,6 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			logger.Infof(builder.String(), args...)
 		}
 
-		//logger.Infof("Access - [%s] - %s - %s - %s - %s", r.Method, r.RequestURI, pathParams, queryParams, body)
 	}
 }
 
