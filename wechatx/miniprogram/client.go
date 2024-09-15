@@ -16,6 +16,7 @@ type Client interface {
 	GetAccessToken(ctx context.Context) (*string, error)
 	GetJSApiTicket(ctx context.Context, token string) (*string, error)
 	GetJSApiTicketCombined(ctx context.Context) (*string, error)
+	JSApiTicketSignature(ticket, nonceStr, timestamp, url string) (string, error)
 }
 
 type Option func(c *client)
