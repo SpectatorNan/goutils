@@ -96,7 +96,7 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		builder.WriteString(" %s")
 		args = append(args, r.RequestURI)
 		if len(m.logHeaderKeys) > 0 {
-			builder.WriteString(" - Headers:")
+			builder.WriteString(" - Headers: %s")
 			hdMap := make(map[string]string)
 			for key := range m.logHeaderKeys {
 				//builder.WriteString(" - %s: %s")
