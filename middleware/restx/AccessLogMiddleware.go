@@ -91,8 +91,8 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		duration := timex.Since(start)
 		logger := logx.WithContext(r.Context()).WithDuration(duration)
 		builder := strings.Builder{}
-		builder.WriteString("[Access] - %s")
-		args := []interface{}{r.Method}
+		builder.WriteString("[Access] - %s %d")
+		args := []interface{}{r.Method, crw.StatusCode}
 		builder.WriteString(" %s")
 		args = append(args, r.RequestURI)
 		if len(m.logHeaderKeys) > 0 {
