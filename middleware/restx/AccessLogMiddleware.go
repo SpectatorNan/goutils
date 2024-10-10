@@ -96,14 +96,20 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		builder.WriteString(" %s")
 		args = append(args, r.RequestURI)
 		if len(m.logHeaderKeys) > 0 {
+			builder.WriteString(" - Headers:")
+			hdMap := make(map[string]string)
 			for key := range m.logHeaderKeys {
-				builder.WriteString(" - %s: %s")
-				args = append(args, key, r.Header.Get(key))
+				//builder.WriteString(" - %s: %s")
+				//args = append(args, key, r.Header.Get(key))
+				hdMap[key] = r.Header.Get(key)
 			}
+			js, _ := json.Marshal(hdMap)
+			args = append(args, js)
 		}
-		if queryParams != nil {
+		if queryParams != nil && len(queryParams) > 0 {
 			builder.WriteString(" - Query: %s")
-			args = append(args, queryParams)
+			js, _ := json.Marshal(queryParams)
+			args = append(args, js)
 		}
 		if body != nil {
 			builder.WriteString(" - Body: %s")
