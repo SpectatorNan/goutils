@@ -9,7 +9,7 @@ import (
 )
 
 func (c *client) getKey(key string) string {
-	if len(c.keyPrefix) > 0 {
+	if len(c.keyPrefix) < 1 {
 		return key
 	}
 	return fmt.Sprintf("%s:%s", c.keyPrefix, key)

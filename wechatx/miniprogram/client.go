@@ -57,7 +57,7 @@ func (c *client) GetJSApiTicketCombined(ctx context.Context) (*string, error) {
 	return c.GetJSApiTicket(ctx, *token)
 }
 func (c *client) GetAccessToken(ctx context.Context) (*string, error) {
-	cacheKey := c.getKey(cacheKeyWithJSApiTicket)
+	cacheKey := c.getKey(cacheKeyWithAccessToken)
 	if cacheData, err := c.checkCache(ctx, cacheKey); err == nil && len(cacheData) > 0 {
 		return &cacheData, nil
 	}
