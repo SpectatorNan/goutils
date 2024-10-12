@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/tidwall/gjson"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/timex"
 	"io"
@@ -100,19 +99,24 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			builder.WriteString(" - Body: %s")
 			args = append(args, body)
 		}
-
-		v := gjson.Get(crw.Body.String(), "data.page")
-
-		if v.Type == gjson.Null {
-			builder.WriteString(" - Response: %s")
-			args = append(args, crw.Body.String())
-		} else if m.limitResponseSize > 0 && len(crw.Body.Bytes()) > m.limitResponseSize {
-			builder.WriteString(" - Response: %s")
+		builder.WriteString(" - Response: %s")
+		if m.limitResponseSize > 0 && len(crw.Body.Bytes()) > m.limitResponseSize {
 			args = append(args, crw.Body.String()[:m.limitResponseSize])
 		} else {
-			builder.WriteString(" - Response: %s")
 			args = append(args, crw.Body.String())
 		}
+		//v := gjson.Get(crw.Body.String(), "data.page")
+
+		//if v.Type == gjson.Null {
+		//	builder.WriteString(" - Response: %s")
+		//	args = append(args, crw.Body.String())
+		//} else if m.limitResponseSize > 0 && len(crw.Body.Bytes()) > m.limitResponseSize {
+		//	builder.WriteString(" - Response: %s")
+		//	args = append(args, crw.Body.String()[:m.limitResponseSize])
+		//} else {
+		//	builder.WriteString(" - Response: %s")
+		//	args = append(args, crw.Body.String())
+		//}
 
 		if m.timeOut < duration {
 			builder.WriteString(" - Timeout context deadline exceeded")
