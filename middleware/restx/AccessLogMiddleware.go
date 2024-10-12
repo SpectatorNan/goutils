@@ -8,6 +8,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/timex"
 	"io"
+	"mime"
+	"mime/multipart"
 	"net/http"
 	"strings"
 	"time"
@@ -77,6 +79,8 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			// Restore the body for further use
 			r.Body = io.NopCloser(bytes.NewBuffer(body))
 
+			body = dealUploadBody(r, body)
+
 			str, err := minifyJSON(string(body))
 			if err == nil {
 				body = []byte(str)
@@ -117,7 +121,7 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		v := gjson.Get(crw.Body.String(), "data.page")
-		fmt.Println(v)
+
 		if v.Type == gjson.Null {
 			builder.WriteString(" - Response: %s")
 			args = append(args, crw.Body.String())
@@ -138,6 +142,67 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 	}
+}
+
+func dealUploadBody(r *http.Request, body []byte) []byte {
+	if strings.HasPrefix(r.Header.Get("Content-Type"), "multipart/form-data") {
+		bodyMap := make(map[string]any)
+
+		// Extract boundary from Content-Type header
+		contentType := r.Header.Get("Content-Type")
+		_, params, err := mime.ParseMediaType(contentType)
+		if err != nil {
+			bodyMap["dumpErr"] = fmt.Sprintf("Failed to parse Content-Type header, val: %s", contentType)
+			b, _ := json.Marshal(bodyMap)
+			return b
+		}
+		boundary, ok := params["boundary"]
+		if !ok {
+			bodyMap["dumpErr"] = fmt.Sprintf("Boundary not found in Content-Type header, content-type: %s", contentType)
+			b, _ := json.Marshal(bodyMap)
+			return b
+		}
+		// Parse multipart form
+		reader := multipart.NewReader(bytes.NewReader(body), boundary)
+		for {
+			part, err := reader.NextPart()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				bodyMap["parseErr"] = fmt.Sprintf("Failed to parse multipart form")
+				b, _ := json.Marshal(bodyMap)
+				return b
+			}
+			if part.FileName() != "" {
+				file := map[string]string{
+					"field":     part.FormName(),
+					"file_name": part.FileName(),
+					"file_type": part.Header.Get("Content-Type"),
+				}
+
+				if files, exists := bodyMap["files"].([]map[string]string); exists {
+					files = append(files, file)
+					bodyMap["files"] = files
+				} else {
+					files := []map[string]string{file}
+					bodyMap["files"] = files
+				}
+			} else {
+				fieldValue, err := io.ReadAll(part)
+				if err != nil {
+					bodyMap["parseErr"] = fmt.Sprintf("Failed to read form field: %s", part.FormName())
+					b, _ := json.Marshal(bodyMap)
+					return b
+				}
+				bodyMap[part.FormName()] = string(fieldValue)
+			}
+
+		}
+		b, _ := json.Marshal(bodyMap)
+		return b
+	}
+	return body
 }
 
 // MinifyJSON minifies a JSON string by removing all unnecessary whitespace.
