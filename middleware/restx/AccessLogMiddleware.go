@@ -68,24 +68,7 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		queryParams := r.URL.Query()
 
 		// Extract body for non-GET requests
-		var body []byte
-		if r.Method != http.MethodGet {
-			var err error
-			body, err = io.ReadAll(r.Body)
-			if err != nil {
-				http.Error(w, "Failed to read request body", http.StatusInternalServerError)
-				return
-			}
-			// Restore the body for further use
-			r.Body = io.NopCloser(bytes.NewBuffer(body))
-
-			body = dealUploadBody(r, body)
-
-			str, err := minifyJSON(string(body))
-			if err == nil {
-				body = []byte(str)
-			}
-		}
+		body := dealBody(r)
 
 		// Use custom response writer to capture response data
 		crw := &CustomResponseWriter{ResponseWriter: w, Body: &bytes.Buffer{}, StatusCode: http.StatusOK}
@@ -103,8 +86,6 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			builder.WriteString(" - Headers: %s")
 			hdMap := make(map[string]string)
 			for key := range m.logHeaderKeys {
-				//builder.WriteString(" - %s: %s")
-				//args = append(args, key, r.Header.Get(key))
 				hdMap[key] = r.Header.Get(key)
 			}
 			js, _ := json.Marshal(hdMap)
@@ -142,6 +123,31 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 	}
+}
+
+func dealBody(r *http.Request) []byte {
+	var body []byte
+	if r.Method != http.MethodGet {
+		var err error
+		body, err = io.ReadAll(r.Body)
+		if err != nil {
+			m := map[string]string{
+				"dumpErr": "Failed to read request body",
+			}
+			b, _ := json.Marshal(m)
+			return b
+		}
+		// Restore the body for further use
+		r.Body = io.NopCloser(bytes.NewBuffer(body))
+
+		body = dealUploadBody(r, body)
+
+		str, err := minifyJSON(string(body))
+		if err == nil {
+			body = []byte(str)
+		}
+	}
+	return body
 }
 
 func dealUploadBody(r *http.Request, body []byte) []byte {
