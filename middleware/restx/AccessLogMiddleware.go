@@ -118,6 +118,7 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		//	args = append(args, crw.Body.String())
 		//}
 
+		// 单独超时时间会可能会有错误的超时日志。比如上传文件
 		if m.timeOut < duration {
 			builder.WriteString(" - Timeout context deadline exceeded")
 			logger.Errorf(builder.String(), args...)
