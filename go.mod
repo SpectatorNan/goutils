@@ -10,7 +10,7 @@ require (
 	github.com/alibabacloud-go/tea v1.2.2
 	github.com/alibabacloud-go/tea-utils v1.4.5
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
-	github.com/casbin/casbin/v2 v2.95.0
+	github.com/casbin/casbin/v2 v2.101.0
 	github.com/casbin/gorm-adapter/v3 v3.21.0
 	github.com/davidbyttow/govips/v2 v2.15.0
 	github.com/go-playground/locales v0.14.1
@@ -25,7 +25,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/redis/go-redis/v9 v9.6.1
 	github.com/thinkeridea/go-extend v1.3.2
-	github.com/tidwall/gjson v1.14.4
 	github.com/ttacon/libphonenumber v1.2.1
 	github.com/wechatpay-apiv3/wechatpay-go v0.2.18
 	github.com/zeromicro/go-zero v1.7.0
@@ -48,7 +47,8 @@ require (
 	github.com/alibabacloud-go/tea-xml v1.1.2 // indirect
 	github.com/aliyun/credentials-go v1.1.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/casbin/govaluate v1.1.0 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.6.1 // indirect
+	github.com/casbin/govaluate v1.2.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/clbanning/mxj/v2 v2.5.6 // indirect
@@ -94,8 +94,6 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
-	github.com/tidwall/match v1.1.1 // indirect
-	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/tjfoc/gmsm v1.3.2 // indirect
 	github.com/ttacon/builder v0.0.0-20170518171403-c099f663e1c2 // indirect
 	go.opentelemetry.io/otel v1.24.0 // indirect
