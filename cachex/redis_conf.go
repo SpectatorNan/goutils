@@ -43,11 +43,17 @@ func (conf RedisSingleNodeConf) ToG0CacheConf() cache.CacheConf {
 	}
 }
 
-func (conf RedisSingleNodeConf) ToGoRedis() *goredis.Client {
-	rdb := goredis.NewClient(&goredis.Options{
+func (conf RedisSingleNodeConf) ToGoRedis(opts ...ToGoRedisOptions) *goredis.Client {
+	opt := &goredis.Options{
 		Addr:     conf.Host,
 		Password: conf.Pass,
 		DB:       0,
-	})
+	}
+
+	for _, option := range opts {
+		option(opt)
+	}
+
+	rdb := goredis.NewClient(opt)
 	return rdb
 }
