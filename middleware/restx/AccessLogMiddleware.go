@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/timex"
+	//"github.com/zeromicro/go-zero/rest/httpx"
 	"io"
 	"mime"
 	"mime/multipart"
@@ -43,8 +44,12 @@ type AccessLogMiddleware struct {
 
 type AccessLogOption func(m *AccessLogMiddleware)
 
+var defaultLogHeaderKeys = map[string]struct{}{
+	"User-Agent": struct{}{},
+}
+
 func NewAccessLogMiddleware(timeOut int64, headerKeys []string, opts ...AccessLogOption) *AccessLogMiddleware {
-	keys := make(map[string]struct{})
+	keys := defaultLogHeaderKeys
 	for _, key := range headerKeys {
 		keys[key] = struct{}{}
 	}
@@ -69,16 +74,40 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		// Extract body for non-GET requests
 		body := dealBody(r)
 
+		done := make(chan struct{})
+
 		// Use custom response writer to capture response data
 		crw := &CustomResponseWriter{ResponseWriter: w, Body: &bytes.Buffer{}, StatusCode: http.StatusOK}
-		next(crw, r)
+		//next(crw, r)
 		//next(w, r)
+
+		go func() {
+			defer close(done)
+			next(crw, r)
+		}()
+
+		// Wait for completion or timeout
+		var timedOut bool
+		select {
+		case <-done:
+			// Handler completed normally
+		case <-r.Context().Done():
+			// Timeout occurred
+			timedOut = true
+			crw.StatusCode = http.StatusGatewayTimeout
+			//http.Error(w, "Request timed out", http.StatusGatewayTimeout)
+			//httpx.ErrorCtx(r.Context(), crw, r.Context().Err())
+		}
 
 		duration := timex.Since(start)
 		logger := logx.WithContext(r.Context()).WithDuration(duration)
 		builder := strings.Builder{}
-		builder.WriteString("[Access] - %s %d")
-		args := []interface{}{r.Method, crw.StatusCode}
+
+		builder.WriteString(" %s ")
+		args := []interface{}{r.Host}
+
+		builder.WriteString("- %s %d")
+		args = append(args, r.Method, crw.StatusCode)
 		builder.WriteString(" %s")
 		args = append(args, r.RequestURI)
 		if len(m.logHeaderKeys) > 0 {
@@ -119,12 +148,11 @@ func (m *AccessLogMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		//}
 
 		// 单独超时时间会可能会有错误的超时日志。比如上传文件
-		if m.timeOut < duration {
-			builder.WriteString(" - Timeout context deadline exceeded")
-			logger.Errorf(builder.String(), args...)
+		//if m.timeOut < duration {
+		if timedOut {
+			logger.Errorf("[Access] - Timeout context deadline exceeded "+builder.String(), args...)
 		} else {
-
-			logger.Infof(builder.String(), args...)
+			logger.Infof("[Access] "+builder.String(), args...)
 		}
 
 	}
