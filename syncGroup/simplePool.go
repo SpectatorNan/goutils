@@ -30,23 +30,23 @@ func example() {
 }
 */
 
-// WaitGroup 一个异步结构体
-type WaitGroup struct {
+// SimplePool
+type SimplePool struct {
 	workChan chan int
 	wg       sync.WaitGroup
 }
 
 // NewPool 生成一个工作池, coreNum 限制
-func NewPool(coreNum int) *WaitGroup {
+func NewPool(coreNum int) *SimplePool {
 	ch := make(chan int, coreNum)
-	return &WaitGroup{
+	return &SimplePool{
 		workChan: ch,
 		wg:       sync.WaitGroup{},
 	}
 }
 
 // Add 添加
-func (ap *WaitGroup) Add(num int) {
+func (ap *SimplePool) Add(num int) {
 	for i := 0; i < num; i++ {
 		ap.workChan <- i
 		ap.wg.Add(1)
@@ -54,7 +54,7 @@ func (ap *WaitGroup) Add(num int) {
 }
 
 // Done 完结
-func (ap *WaitGroup) Done() {
+func (ap *SimplePool) Done() {
 LOOP:
 	for {
 		select {
@@ -66,6 +66,6 @@ LOOP:
 }
 
 // Wait 等待
-func (ap *WaitGroup) Wait() {
+func (ap *SimplePool) Wait() {
 	ap.wg.Wait()
 }
