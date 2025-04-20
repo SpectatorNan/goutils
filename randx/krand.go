@@ -48,8 +48,7 @@ const (
 	KC_RAND_KIND_ALL                = 14 // 数字、大小写字母、符号
 )
 
-// deprecated use randx.Krand instead
-// Krand is a function that generates a random string of a specified size and kind.
+// 随机字符串
 func Krand(size int, kind int) string {
 	kinds := map[int][][]int{
 		KC_RAND_KIND_NUM:                {{10, 48}},
