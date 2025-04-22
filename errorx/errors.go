@@ -21,10 +21,6 @@ func NewErrCodeMsg(errCode uint32, errMsg string) *CodeError {
 	return &CodeError{Code: errCode, Message: errMsg}
 }
 
-//func NewErrCode(errCode uint32) *CodeError {
-//	return &CodeError{Code: errCode, Message: MapErrMsgKey(errCode)}
-//}
-
 func NewErrMsg(errMsg string) *CodeError {
 	return &CodeError{Code: ErrCodeDefault, Message: errMsg}
 }
@@ -32,11 +28,3 @@ func NewErrMsg(errMsg string) *CodeError {
 func NewErrCodeMsgReason(errCode uint32, errMsg string, reason string, traceId string) *CodeError {
 	return &CodeError{Code: errCode, Message: errMsg, Reason: reason, TraceId: traceId}
 }
-
-//func NewErrCodeReason(errCode uint32, reason string, traceId string) *CodeError {
-//	return &CodeError{Code: errCode, Message: MapErrMsgKey(errCode), Reason: reason, TraceId: traceId}
-//}
-
-//func NewErrMsgReason(errMsg string, reason string, traceId string) *CodeError {
-//	return &CodeError{Code: DEFAULT_ERROR, Message: errMsg, Reason: reason, TraceId: traceId}
-//}

@@ -12,17 +12,19 @@ import (
 	"net/http"
 )
 
+var okStatusCode = http.StatusOK
+
+func SetOkStatusCode(code int) {
+	okStatusCode = code
+}
+
 var errRequestStatusCode = http.StatusOK
 
 func SetErrStatusCode(code int) {
 	errRequestStatusCode = code
 }
 
-var okStatusCode = http.StatusOK
-
-func SetOkStatusCode(code int) {
-	okStatusCode = code
-}
+var forbiddenStatusCode = http.StatusForbidden
 
 var debugMode = false
 
@@ -34,30 +36,40 @@ func SetDebugMode(mode bool) {
 func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err error) {
 
 	ctx := r.Context()
+	statusCode := okStatusCode
 	if err == nil {
-
 		//成功返回
 		rp := NewSuccessResponse(resp)
-		httpx.WriteJson(w, okStatusCode, rp)
+		httpx.WriteJson(w, statusCode, rp)
 	} else {
 		//错误返回
 		dfe := errorx2.DefaultErr
 		errCode := dfe.Code
-		errmsg := goi18nx.FormatText(ctx, dfe.MsgKey, dfe.DefaultMsg)
-		//errreason := err.Error()
+		errmsg := dfe.DefaultMsg
+		if goi18nx.IsHasI18n(ctx) {
+			errmsg = goi18nx.FormatText(ctx, dfe.MsgKey, dfe.DefaultMsg)
+		}
+		statusCode = errRequestStatusCode
 
 		causeErr := errors.Cause(err)
 		var codeE *errorx2.CodeError
 		var i18nE *errorx2.I18nCodeError
+		var forbiddenE *errorx2.ForbiddenError
 		// err类型
-
-		if errors.As(causeErr, &codeE) { //自定义错误类型
+		if errors.As(causeErr, &forbiddenE) {
+			errCode = uint32(forbiddenStatusCode)
+			errmsg = forbiddenE.Message
+			statusCode = forbiddenStatusCode
+			if len(forbiddenE.Reason) > 0 && debugMode {
+				errmsg = fmt.Sprintf("%s, %s", forbiddenE.Message, forbiddenE.Reason)
+			}
+		} else if errors.As(causeErr, &codeE) { //自定义错误类型
 			//自定义CodeError
 			if codeE.Code != dfe.Code {
 				errCode = codeE.Code
 				errmsg = codeE.Message
-				if len(codeE.Reason) > 0 {
-					//errreason = codeE.Reason
+				if len(codeE.Reason) > 0 && debugMode {
+					errmsg = fmt.Sprintf("%s, %s", codeE.Message, codeE.Reason)
 				}
 			} else {
 				errmsg = codeE.Message
@@ -77,23 +89,22 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 			} else {
 				errmsg = dfe.DefaultMsg
 			}
-			httpx.WriteJson(w, errRequestStatusCode, NewErrorResponse(errCode, errmsg))
-			return
 		} else if gstatus, ok := status.FromError(causeErr); ok { // grpc err错误
 			grpcCode := uint32(gstatus.Code())
 			if grpcCode != errorx2.ErrCodeDefault {
 				errCode = grpcCode
 				errmsg = gstatus.Message()
 			}
+			if grpcCode == uint32(forbiddenStatusCode) {
+				statusCode = forbiddenStatusCode
+			}
 		}
 
-		//logx.WithContext(r.Context()).Errorf("【API-ERR】: %+v ", errreason)
 		logx.WithContext(r.Context()).Errorf("【API-ERR】 %+v ", err)
 		if debugMode {
-			//errmsg = errreason
 			errmsg = err.Error()
 		}
-		httpx.WriteJson(w, errRequestStatusCode, NewErrorResponse(errCode, errmsg))
+		httpx.WriteJson(w, statusCode, NewErrorResponse(errCode, errmsg))
 	}
 }
 
