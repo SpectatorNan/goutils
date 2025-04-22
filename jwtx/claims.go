@@ -1,6 +1,6 @@
 package jwtx
 
-import "github.com/golang-jwt/jwt/v4"
+import "github.com/golang-jwt/jwt/v5"
 
 // Custom claims structure
 type CustomClaims[Base BaseClaim] struct {

@@ -7,7 +7,7 @@ import (
 	errorx2 "github.com/SpectatorNan/goutils/errorx"
 	"github.com/SpectatorNan/goutils/jwtx"
 	"github.com/SpectatorNan/goutils/respx"
-	jwtv4 "github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"net/http"
@@ -91,7 +91,7 @@ func CheckLogin[T jwtx.BaseClaim](w http.ResponseWriter, r *http.Request,
 		return nil, r.Context(), false
 	}
 	var claim jwtx.CustomClaims[T]
-	tok, err := jwtv4.ParseWithClaims(authorization, &claim, func(t *jwtv4.Token) (interface{}, error) {
+	tok, err := jwt.ParseWithClaims(authorization, &claim, func(t *jwt.Token) (interface{}, error) {
 		return fetchSaltFn(claim.BaseClaims)
 	})
 	//tok, err := parser.ParseToken(r, m.secret, "")
