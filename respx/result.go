@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 	"net/http"
@@ -95,8 +96,19 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 				errCode = grpcCode
 				errmsg = gstatus.Message()
 			}
-			if grpcCode == uint32(forbiddenStatusCode) {
-				statusCode = forbiddenStatusCode
+			//if grpcCode == uint32(forbiddenStatusCode) {
+			//	statusCode = forbiddenStatusCode
+			//}
+			for _, detail := range gstatus.Details() {
+				if info, ok := detail.(*errdetails.ErrorInfo); ok {
+					domain := info.Domain
+					//reason := info.Reason
+
+					if domain == errorx2.GrpcErrorInfoDomain_Forbidden {
+						//errCode = uint32(forbiddenStatusCode)
+						statusCode = forbiddenStatusCode
+					}
+				}
 			}
 		}
 
