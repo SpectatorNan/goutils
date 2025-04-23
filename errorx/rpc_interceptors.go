@@ -103,3 +103,47 @@ func GrpcErrorWithDetails(ctx context.Context, err error) error {
 
 	return status.Error(codes.Code(ErrCodeDefault), err.Error())
 }
+
+// Function for extracting error details from gRPC status
+func ErrorFromGrpcStatus(err error) error {
+	if err == nil {
+		return nil
+	}
+
+	st, ok := status.FromError(err)
+	if !ok {
+		return err
+	}
+
+	// Extract details
+	for _, detail := range st.Details() {
+		if info, ok := detail.(*errdetails.ErrorInfo); ok {
+			domain := info.Domain
+			reason := info.Reason
+
+			switch domain {
+			case "i18n":
+				return &I18nCodeError{
+					Code:       uint32(st.Code()),
+					MsgKey:     reason,
+					DefaultMsg: st.Message(),
+				}
+			case "code":
+				return &CodeError{
+					Code:    uint32(st.Code()),
+					Message: st.Message(),
+					Reason:  reason,
+				}
+			case "forbidden":
+				return &ForbiddenError{
+					Code:    uint32(st.Code()),
+					Message: st.Message(),
+					Reason:  reason,
+				}
+			}
+
+		}
+	}
+
+	return err
+}
