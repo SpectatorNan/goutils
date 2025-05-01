@@ -26,7 +26,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.91
 	github.com/mojocn/base64Captcha v1.3.8
 	github.com/pkg/errors v0.9.1
-	github.com/redis/go-redis/v9 v9.7.3
+	github.com/redis/go-redis/v9 v9.8.0
 	github.com/stretchr/testify v1.10.0
 	github.com/thinkeridea/go-extend v1.3.2
 	github.com/ttacon/libphonenumber v1.2.1
