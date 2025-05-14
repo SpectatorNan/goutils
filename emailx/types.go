@@ -7,6 +7,11 @@ type SendInfo struct {
 	Message  MessageInfo
 }
 
+type SendMultiInfo struct {
+	Receivers []string
+	Message   MessageInfo
+}
+
 type SenderInfo struct {
 	Name  string
 	Email string
