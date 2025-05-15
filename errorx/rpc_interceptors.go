@@ -23,7 +23,7 @@ func ResourceNotFoundErrInterceptors(ctx context.Context, req interface{}, info 
 	resp, err = handler(ctx, req)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ErrResourceNotFound
+			return nil, errors.Wrap(ErrResourceNotFound, err.Error())
 		}
 		return nil, err
 	}
