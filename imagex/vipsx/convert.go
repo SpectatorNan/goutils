@@ -1,8 +1,8 @@
 package vipsx
 
 import (
+	"github.com/SpectatorNan/goutils/errors"
 	"github.com/davidbyttow/govips/v2/vips"
-	"github.com/pkg/errors"
 	"io"
 	"os"
 	"path"

@@ -3,8 +3,8 @@ package respx
 import (
 	"fmt"
 	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
+	"github.com/SpectatorNan/goutils/errors"
 	errorx2 "github.com/SpectatorNan/goutils/errorx"
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"

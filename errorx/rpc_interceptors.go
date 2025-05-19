@@ -2,14 +2,17 @@ package errorx
 
 import (
 	"context"
+	"fmt"
 	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
-	"github.com/pkg/errors"
+	"github.com/SpectatorNan/goutils/errors"
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
+	"runtime"
+	"strings"
 )
 
 var ErrResourceNotFound = errors.New("record not found")
@@ -19,17 +22,36 @@ func SetResourceNotFound(err error) {
 }
 
 func ResourceNotFoundErrInterceptors(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-
+	traceID := "trace_id"
+	ctx = context.WithValue(ctx, "trace_id", traceID)
 	resp, err = handler(ctx, req)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.Wrap(ErrResourceNotFound, err.Error())
+
+			newErr := errors.WithStackFrom(ErrResourceNotFound, err)
+
+			return nil, errors.WithMessage(newErr, fmt.Sprintf("original error: %v", err))
 		}
 		return nil, err
 	}
 	return resp, nil
 }
-
+func framesToString(frames *runtime.Frames) string {
+	var sb strings.Builder
+	for {
+		frame, more := frames.Next()
+		sb.WriteString(fmt.Sprintf(
+			"%s\n\t%s:%d\n",
+			frame.Function,
+			frame.File,
+			frame.Line,
+		))
+		if !more {
+			break
+		}
+	}
+	return sb.String()
+}
 func ParseGrpcError(err error) error {
 	if gstatus, ok := status.FromError(err); ok {
 		var ice I18nCodeError

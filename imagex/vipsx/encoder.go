@@ -1,9 +1,9 @@
 package vipsx
 
 import (
+	"github.com/SpectatorNan/goutils/errors"
 	export2 "github.com/SpectatorNan/goutils/imagex/vipsx/export"
 	"github.com/davidbyttow/govips/v2/vips"
-	"github.com/pkg/errors"
 )
 
 func webpEncoder(img *vips.ImageRef, quality int) ([]byte, error) {

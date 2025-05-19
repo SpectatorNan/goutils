@@ -2,9 +2,9 @@ package casbinx
 
 import (
 	"context"
+	"github.com/SpectatorNan/goutils/errors"
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"sync"
 )

@@ -3,7 +3,7 @@ package miniprogram
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
+	"github.com/SpectatorNan/goutils/errors"
 	"github.com/redis/go-redis/v9"
 	"time"
 )

@@ -3,7 +3,7 @@ package miniprogram
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/pkg/errors"
+	"github.com/SpectatorNan/goutils/errors"
 	"io"
 	"net/http"
 	"net/url"
