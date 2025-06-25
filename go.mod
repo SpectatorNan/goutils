@@ -11,7 +11,7 @@ require (
 	github.com/alibabacloud-go/dysmsapi-20170525/v2 v2.0.18
 	github.com/alibabacloud-go/tea v1.3.9
 	github.com/alibabacloud-go/tea-utils v1.4.5
-	github.com/alicebob/miniredis/v2 v2.34.0
+	github.com/alicebob/miniredis/v2 v2.35.0
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
 	github.com/casbin/casbin/v2 v2.105.0
 	github.com/casbin/gorm-adapter/v3 v3.32.0
@@ -30,7 +30,7 @@ require (
 	github.com/thinkeridea/go-extend v1.3.2
 	github.com/ttacon/libphonenumber v1.2.1
 	github.com/wechatpay-apiv3/wechatpay-go v0.2.20
-	github.com/zeromicro/go-zero v1.8.2
+	github.com/zeromicro/go-zero v1.8.4
 	go.opentelemetry.io/otel/trace v1.35.0
 	golang.org/x/crypto v0.37.0
 	golang.org/x/image v0.26.0
@@ -48,7 +48,6 @@ require (
 	github.com/alibabacloud-go/endpoint-util v1.1.0 // indirect
 	github.com/alibabacloud-go/openapi-util v0.0.11 // indirect
 	github.com/alibabacloud-go/tea-xml v1.1.2 // indirect
-	github.com/alicebob/gopher-json v0.0.0-20230218143504-906a9b012302 // indirect
 	github.com/aliyun/credentials-go v1.1.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.8.1 // indirect
@@ -73,6 +72,8 @@ require (
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
+	github.com/grafana/pyroscope-go v1.2.2 // indirect
+	github.com/grafana/pyroscope-go/godeltaprof v0.1.8 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
