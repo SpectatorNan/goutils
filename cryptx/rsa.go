@@ -86,7 +86,20 @@ func RSAVerify(pubKey *rsa.PublicKey, data, sign []byte) error {
 	return rsa.VerifyPKCS1v15(pubKey, crypto.SHA256, data, sign)
 }
 
-// GenerateRsaKey create rsa private and public pemo file.
+func GenerateRSAKeyPair(keySize int) (*rsa.PrivateKey, *rsa.PublicKey, error) {
+	// Generate a new RSA private key
+	privateKey, err := rsa.GenerateKey(rand.Reader, keySize)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// Get the public key from the private key
+	publicKey := &privateKey.PublicKey
+
+	return privateKey, publicKey, nil
+}
+
+// GenerateRsaKey create rsa private and public pem file.
 // Play: https://go.dev/play/p/zutRHrDqs0X
 func GenerateRsaKey(keySize int, priKeyFile, pubKeyFile string) error {
 	// private key
@@ -140,7 +153,6 @@ func GenerateRsaKey(keySize int, priKeyFile, pubKeyFile string) error {
 
 	return nil
 }
-
 
 func LoadKeyBytes(fileName string) ([]byte, error) {
 	file, err := os.Open(fileName)
