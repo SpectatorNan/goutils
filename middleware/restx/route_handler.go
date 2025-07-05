@@ -9,6 +9,14 @@ import (
 	"time"
 )
 
+func AllRouteHandlers() []rest.RunOption {
+	return []rest.RunOption{
+		RouteNotFound(),
+		RouteMethodNotAllow(),
+		WithHealthCheckApiHandler(),
+	}
+}
+
 func RouteNotFoundWithNotAllow() []rest.RunOption {
 	return []rest.RunOption{
 		RouteNotFound(),
