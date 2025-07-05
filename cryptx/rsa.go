@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-func RSASign(data []byte, privateKey []byte) ([]byte, error) {
+func RSASignWithByte(data []byte, privateKey []byte) ([]byte, error) {
 	block, _ := pem.Decode(privateKey)
 	if block == nil || block.Type != "RSA PRIVATE KEY" {
 		return nil, errors.New("private key error")
@@ -20,8 +20,7 @@ func RSASign(data []byte, privateKey []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	hashed := sha256.Sum256(data)
-	return rsa.SignPKCS1v15(rand.Reader, priv, crypto.SHA256, hashed[:])
+	return RSASignWithPriKey(data, priv)
 }
 
 func RSASignWithFileName(data []byte, privateKeyFileName string) ([]byte, error) {
@@ -29,7 +28,15 @@ func RSASignWithFileName(data []byte, privateKeyFileName string) ([]byte, error)
 	if err != nil {
 		return nil, err
 	}
-	return RSASign(data, privateKey)
+	return RSASignWithByte(data, privateKey)
+}
+
+func RSASignWithPriKey(data []byte, privateKey *rsa.PrivateKey) ([]byte, error) {
+	if privateKey == nil {
+		return nil, errors.New("private key is nil")
+	}
+	hashed := sha256.Sum256(data)
+	return rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, hashed[:])
 }
 
 // 加密

@@ -1,4 +1,4 @@
-package unique
+package node_test
 
 import (
 	"testing"

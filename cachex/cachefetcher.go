@@ -1,4 +1,4 @@
-package synczx
+package cachex
 
 import (
 	"golang.org/x/sync/singleflight"
