@@ -1,5 +1,7 @@
 package errorx
 
+import "google.golang.org/grpc/codes"
+
 const OK uint32 = 200
 
 /*
@@ -24,3 +26,53 @@ const (
 	ErrCodeNotFoundResource              = 10003
 	ErrCodeTypeMismatchForConvert        = 10004
 )
+
+type ErrorType uint32
+
+const (
+	ErrTypeDefault ErrorType = iota
+	ErrTypeNotFoundResource
+	ErrTypeForbidden
+)
+
+type IErrorType interface {
+	ErrorType() ErrorType
+}
+
+func (e ErrorType) StatusCode() codes.Code {
+	switch e {
+	case ErrTypeDefault:
+		return codes.Code(ErrCodeDefault)
+	case ErrTypeNotFoundResource:
+		return codes.NotFound
+	case ErrTypeForbidden:
+		return codes.PermissionDenied
+	default:
+		return codes.Internal
+	}
+}
+func (e ErrorType) String() string {
+	switch e {
+	case ErrTypeDefault:
+		return "default"
+	case ErrTypeNotFoundResource:
+		return "not_found_resource"
+	case ErrTypeForbidden:
+		return "forbidden"
+	default:
+		return "unknown"
+	}
+}
+
+func ErrorTypeFromString(s string) ErrorType {
+	switch s {
+	case "default":
+		return ErrTypeDefault
+	case "not_found_resource":
+		return ErrTypeNotFoundResource
+	case "forbidden":
+		return ErrTypeForbidden
+	default:
+		return ErrTypeDefault
+	}
+}

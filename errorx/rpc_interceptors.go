@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
 	"github.com/SpectatorNan/goutils/errors"
+	"github.com/SpectatorNan/goutils/tools"
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
@@ -22,14 +23,12 @@ func SetResourceNotFound(err error) {
 }
 
 func ResourceNotFoundErrInterceptors(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-	traceID := "trace_id"
-	ctx = context.WithValue(ctx, "trace_id", traceID)
 	resp, err = handler(ctx, req)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 
-			newErr := errors.WithStackFrom(ErrResourceNotFound, err)
-
+			//newErr := errors.WithStackFrom(ErrResourceNotFound, err)
+			newErr := ErrResourceNotFound
 			return nil, errors.WithMessage(newErr, fmt.Sprintf("original error: %v", err))
 		}
 		return nil, err
@@ -84,10 +83,16 @@ func GrpcErrorWithDetails(ctx context.Context, err error) error {
 		if goi18nx.IsHasI18n(context.Background()) {
 			msg = goi18nx.FormatText(ctx, i18nErr.MsgKey, i18nErr.DefaultMsg)
 		}
-		st := status.New(codes.Code(code), msg)
+		st := status.New(i18nErr.ErrorType().StatusCode(), msg)
 		detailsProto := &errdetails.ErrorInfo{
 			Reason: i18nErr.MsgKey,
 			Domain: "i18n",
+			Metadata: map[string]string{
+				"code":        fmt.Sprintf("%d", code),
+				"message":     msg,
+				"message_key": i18nErr.MsgKey,
+				"error_type":  i18nErr.ErrorType().String(),
+			},
 		}
 		st, _ = st.WithDetails(detailsProto)
 		return st.Err()
@@ -97,31 +102,36 @@ func GrpcErrorWithDetails(ctx context.Context, err error) error {
 	if errors.As(cause, &codeErr) {
 		code := codeErr.Code
 		msg := codeErr.Message
-		st := status.New(codes.Code(code), msg)
+		st := status.New(codeErr.ErrorType().StatusCode(), msg)
 		detailsProto := &errdetails.ErrorInfo{
 			Reason: codeErr.Reason,
 			Domain: "code",
+			Metadata: map[string]string{
+				"code":       fmt.Sprintf("%d", code),
+				"message":    msg,
+				"error_type": codeErr.ErrorType().String(),
+			},
 		}
 		st, _ = st.WithDetails(detailsProto)
 		return st.Err()
 	}
 
-	var forbiddenErr *ForbiddenError
-	if errors.As(cause, &forbiddenErr) {
-		//code := codes.PermissionDenied
-		code := forbiddenErr.Code
-		msg := forbiddenErr.Message
-		if goi18nx.IsHasI18n(context.Background()) {
-			msg = goi18nx.FormatText(ctx, forbiddenErr.MsgKey, forbiddenErr.Message)
-		}
-		st := status.New(codes.Code(code), msg)
-		detailsProto := &errdetails.ErrorInfo{
-			Reason: forbiddenErr.Reason,
-			Domain: "forbidden",
-		}
-		st, _ = st.WithDetails(detailsProto)
-		return st.Err()
-	}
+	//var forbiddenErr *ForbiddenError
+	//if errors.As(cause, &forbiddenErr) {
+	//	//code := codes.PermissionDenied
+	//	code := forbiddenErr.Code
+	//	msg := forbiddenErr.Message
+	//	if goi18nx.IsHasI18n(context.Background()) {
+	//		msg = goi18nx.FormatText(ctx, forbiddenErr.MsgKey, forbiddenErr.Message)
+	//	}
+	//	st := status.New(codes.Code(code), msg)
+	//	detailsProto := &errdetails.ErrorInfo{
+	//		Reason: forbiddenErr.Reason,
+	//		Domain: "forbidden",
+	//	}
+	//	st, _ = st.WithDetails(detailsProto)
+	//	return st.Err()
+	//}
 
 	return status.Error(codes.Code(ErrCodeDefault), err.Error())
 }
@@ -145,23 +155,36 @@ func ErrorFromGrpcStatus(err error) error {
 
 			switch domain {
 			case "i18n":
+				codestr := info.Metadata["code"]
+				message := info.Metadata["message"]
+				messageKey := info.Metadata["message_key"]
+				errorTypestr := info.Metadata["error_type"]
+				errorType := ErrorTypeFromString(errorTypestr)
+				code := tools.StringToInt64(codestr)
 				return &I18nCodeError{
-					Code:       uint32(st.Code()),
-					MsgKey:     reason,
-					DefaultMsg: st.Message(),
+					Code:       uint32(code),
+					MsgKey:     messageKey,
+					DefaultMsg: message,
+					ErrType:    errorType,
 				}
 			case "code":
+				codestr := info.Metadata["code"]
+				message := info.Metadata["message"]
+				errorTypestr := info.Metadata["error_type"]
+				errorType := ErrorTypeFromString(errorTypestr)
+				code := tools.StringToInt64(codestr)
 				return &CodeError{
-					Code:    uint32(st.Code()),
-					Message: st.Message(),
+					Code:    uint32(code),
+					Message: message,
 					Reason:  reason,
+					ErrType: errorType,
 				}
-			case "forbidden":
-				return &ForbiddenError{
-					Code:    uint32(st.Code()),
-					Message: st.Message(),
-					Reason:  reason,
-				}
+				//case "forbidden":
+				//	return &ForbiddenError{
+				//		Code:    uint32(st.Code()),
+				//		Message: st.Message(),
+				//		Reason:  reason,
+				//	}
 			}
 
 		}

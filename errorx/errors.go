@@ -9,6 +9,7 @@ type CodeError struct {
 	Message string `json:"message"`
 	Reason  string `json:"reason,omitempty"`
 	TraceId string `json:"trace_id,omitempty"`
+	ErrType ErrorType
 }
 
 var CodeErrorDebug bool = false
@@ -16,7 +17,9 @@ var CodeErrorDebug bool = false
 func (e *CodeError) Error() string {
 	return fmt.Sprintf("ErrCode:%d，ErrMsg:%s", e.Code, e.Message)
 }
-
+func (e *CodeError) ErrorType() ErrorType {
+	return e.ErrType
+}
 func NewErrCodeMsg(errCode uint32, errMsg string) *CodeError {
 	return &CodeError{Code: errCode, Message: errMsg}
 }

@@ -55,16 +55,17 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 		causeErr := errors.Cause(err)
 		var codeE *errorx2.CodeError
 		var i18nE *errorx2.I18nCodeError
-		var forbiddenE *errorx2.ForbiddenError
+		//var forbiddenE *errorx2.ForbiddenError
 		// err类型
-		if errors.As(causeErr, &forbiddenE) {
-			errCode = uint32(forbiddenStatusCode)
-			errmsg = forbiddenE.Message
-			statusCode = forbiddenStatusCode
-			if len(forbiddenE.Reason) > 0 && debugMode {
-				errmsg = fmt.Sprintf("%s, %s", forbiddenE.Message, forbiddenE.Reason)
-			}
-		} else if errors.As(causeErr, &codeE) { //自定义错误类型
+		//if errors.As(causeErr, &forbiddenE) {
+		//	errCode = uint32(forbiddenStatusCode)
+		//	errmsg = forbiddenE.Message
+		//	statusCode = forbiddenStatusCode
+		//	if len(forbiddenE.Reason) > 0 && debugMode {
+		//		errmsg = fmt.Sprintf("%s, %s", forbiddenE.Message, forbiddenE.Reason)
+		//	}
+		//} else
+		if errors.As(causeErr, &codeE) { //自定义错误类型
 			//自定义CodeError
 			if codeE.Code != dfe.Code {
 				errCode = codeE.Code
