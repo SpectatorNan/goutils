@@ -68,9 +68,9 @@ func ParseGrpcError(err error) error {
 type GrpcErrorInfoDomain string
 
 const (
-	GrpcErrorInfoDomain_I18n      = "i18n"
-	GrpcErrorInfoDomain_Code      = "code"
-	GrpcErrorInfoDomain_Forbidden = "forbidden"
+	GrpcErrorInfoDomain_I18n = "i18n"
+	GrpcErrorInfoDomain_Code = "code"
+	//GrpcErrorInfoDomain_Forbidden = "forbidden"
 )
 
 func GrpcErrorWithDetails(ctx context.Context, err error) error {

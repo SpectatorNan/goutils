@@ -1,13 +1,13 @@
 package respx
 
 import (
+	"context"
 	"fmt"
 	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
 	"github.com/SpectatorNan/goutils/errors"
 	errorx2 "github.com/SpectatorNan/goutils/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 	"net/http"
@@ -53,8 +53,8 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 		statusCode = errRequestStatusCode
 
 		causeErr := errors.Cause(err)
-		var codeE *errorx2.CodeError
-		var i18nE *errorx2.I18nCodeError
+		//var codeE *errorx2.CodeError
+		//var i18nE *errorx2.I18nCodeError
 		//var forbiddenE *errorx2.ForbiddenError
 		// err类型
 		//if errors.As(causeErr, &forbiddenE) {
@@ -65,24 +65,12 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 		//		errmsg = fmt.Sprintf("%s, %s", forbiddenE.Message, forbiddenE.Reason)
 		//	}
 		//} else
-		if errors.As(causeErr, &codeE) { //自定义错误类型
-			//自定义CodeError
-			if codeE.Code != dfe.Code {
-				errCode = codeE.Code
-				errmsg = codeE.Message
-				if len(codeE.Reason) > 0 && debugMode {
-					errmsg = fmt.Sprintf("%s, %s", codeE.Message, codeE.Reason)
-				}
-			} else {
-				errmsg = codeE.Message
-			}
-		} else if errors.As(causeErr, &i18nE) { //自定义国际化错误类型
-			if goi18nx.IsHasI18n(ctx) {
-				errmsg = goi18nx.FormatText(ctx, i18nE.MsgKey, i18nE.DefaultMsg)
-			} else {
-				errmsg = dfe.DefaultMsg
-			}
-			errCode = i18nE.Code
+
+		normalResult := handleError(ctx, causeErr)
+		if normalResult != nil {
+			statusCode = normalResult.statusCode
+			errCode = normalResult.businessCode
+			errmsg = normalResult.businessMsg
 		} else if errors.Is(err, gorm.ErrRecordNotFound) {
 			dfe = errorx2.NotFoundResourceErr
 			errCode = dfe.Code
@@ -91,29 +79,63 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 			} else {
 				errmsg = dfe.DefaultMsg
 			}
-		} else if gstatus, ok := status.FromError(causeErr); ok { // grpc err错误
-			grpcCode := uint32(gstatus.Code())
-			if grpcCode != errorx2.ErrCodeDefault {
-				errCode = grpcCode
-				errmsg = gstatus.Message()
+		} else if _, ok := status.FromError(causeErr); ok { // grpc err错误
+
+			grpcErr := errorx2.ErrorFromGrpcStatus(causeErr)
+			grpcResult := handleError(ctx, grpcErr)
+			if grpcResult != nil {
+				statusCode = grpcResult.statusCode
+				errCode = grpcResult.businessCode
+				errmsg = grpcResult.businessMsg
 			}
+			err = grpcErr
+
+			//grpcCode := uint32(gstatus.Code())
+			//if grpcCode != errorx2.ErrCodeDefault {
+			//	errCode = grpcCode
+			//	errmsg = gstatus.Message()
+			//}
 			//if grpcCode == uint32(forbiddenStatusCode) {
 			//	statusCode = forbiddenStatusCode
 			//}
-			for _, detail := range gstatus.Details() {
-				if info, ok := detail.(*errdetails.ErrorInfo); ok {
-					domain := info.Domain
-					//reason := info.Reason
+			//for _, detail := range gstatus.Details() {
+			//if info, ok := detail.(*errdetails.ErrorInfo); ok {
+			//domain := info.Domain
+			//reason := info.Reason
 
-					if domain == errorx2.GrpcErrorInfoDomain_Forbidden {
-						//errCode = uint32(forbiddenStatusCode)
-						statusCode = forbiddenStatusCode
-					}
-				}
-			}
+			//if domain == errorx2.GrpcErrorInfoDomain_Forbidden {
+			//errCode = uint32(forbiddenStatusCode)
+			//	statusCode = forbiddenStatusCode
+			//}
+			//}
+			//}
 		}
 
-		logx.WithContext(r.Context()).Errorf("【API-ERR】 %+v ", err)
+		// 根据错误类型使用不同的日志级别
+		logger := logx.WithContext(r.Context())
+		
+		// 检查是否为 NotFoundResource 错误类型
+		var isNotFoundResource bool
+		if normalResult != nil {
+			// 从 normalResult 中推断错误类型
+			if et, hasErrorType := causeErr.(errorx2.IErrorType); hasErrorType {
+				isNotFoundResource = et.ErrorType() == errorx2.ErrTypeNotFoundResource
+			}
+		} else if _, ok := status.FromError(causeErr); ok {
+			// gRPC 错误情况
+			grpcErr := errorx2.ErrorFromGrpcStatus(causeErr)
+			if et, hasErrorType := grpcErr.(errorx2.IErrorType); hasErrorType {
+				isNotFoundResource = et.ErrorType() == errorx2.ErrTypeNotFoundResource
+			}
+		}
+		
+		// 根据错误类型选择日志级别，NotFoundResource 使用 info 级别减少噪音
+		if isNotFoundResource {
+			logger.Infof("【API-INFO】 Resource not found: %s", errmsg)
+		} else {
+			logger.Errorf("【API-ERR】 %+v ", err)
+		}
+		
 		if debugMode {
 			errmsg = err.Error()
 		}
@@ -129,4 +151,51 @@ func ParamErrorResult(r *http.Request, w http.ResponseWriter, err error) {
 	logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
 	logx.WithContext(r.Context()).Errorf("【API-ERR】 reason: %+v ", errMsg)
 	httpx.WriteJson(w, errRequestStatusCode, NewErrorResponse(errorx2.ErrCodeRequestParams, errMsg))
+}
+
+type handlerResult struct {
+	statusCode   int
+	businessCode uint32
+	businessMsg  string
+}
+
+func handleError(ctx context.Context, err error) *handlerResult {
+	var codeE *errorx2.CodeError
+	var i18nE *errorx2.I18nCodeError
+	statusCode := errRequestStatusCode
+	var extractedErrorType errorx2.ErrorType = errorx2.ErrTypeDefault
+	if et, hasErrorType := err.(errorx2.IErrorType); hasErrorType {
+		extractedErrorType = et.ErrorType()
+	}
+	if extractedErrorType == errorx2.ErrTypeForbidden {
+		statusCode = forbiddenStatusCode
+	}
+	if errors.As(err, &codeE) {
+		errCode := codeE.Code
+		errmsg := codeE.Message
+		if len(codeE.Reason) > 0 && debugMode {
+			errmsg = fmt.Sprintf("%s, %s", codeE.Message, codeE.Reason)
+		}
+		return &handlerResult{
+			statusCode:   statusCode,
+			businessCode: errCode,
+			businessMsg:  errmsg,
+		}
+
+	} else if errors.As(err, &i18nE) { //自定义国际化错误类型
+		errCode := i18nE.Code
+		errmsg := ""
+		if goi18nx.IsHasI18n(ctx) {
+			errmsg = goi18nx.FormatText(ctx, i18nE.MsgKey, i18nE.DefaultMsg)
+		} else {
+			errmsg = i18nE.DefaultMsg
+		}
+		return &handlerResult{
+			statusCode:   statusCode,
+			businessCode: errCode,
+			businessMsg:  errmsg,
+		}
+	}
+
+	return nil
 }
