@@ -54,9 +54,9 @@ func (c *Client) CreateBucket(ctx context.Context, bucketName string) error {
 
 }
 
-func (c *Client) UploadFile(ctx context.Context, bucketName, objectName string, file io.Reader, fileSize int64) error {
+func (c *Client) UploadFile(ctx context.Context, bucketName, objectName string, file io.Reader, fileSize int64, opt minio.PutObjectOptions) error {
 
-	uploadInfo, err := c.MinioClient.PutObject(ctx, bucketName, objectName, file, fileSize, minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	uploadInfo, err := c.MinioClient.PutObject(ctx, bucketName, objectName, file, fileSize, opt)
 	if err != nil {
 		return err
 	}
