@@ -16,13 +16,13 @@ type I18nCodeError struct {
 func (e *I18nCodeError) Error() string {
 	str, err := jsonx.Marshal(e)
 	if err != nil {
-		return NewErrCodeMsg(e.Code, e.MsgKey).Error()
+		return NewCodeErrWithCodeMsg(e.Code, e.MsgKey).Error()
 	}
 	return string(str)
 }
 
 func NewErrWithI18nCodeErr(ctx context.Context, e I18nCodeError) error {
-	return NewErrCodeMsg(
+	return NewCodeErrWithCodeMsg(
 		e.Code,
 		goi18nx.FormatText(ctx, e.MsgKey, e.DefaultMsg))
 }

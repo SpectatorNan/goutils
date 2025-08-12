@@ -20,14 +20,17 @@ func (e *CodeError) Error() string {
 func (e *CodeError) ErrorType() ErrorType {
 	return e.ErrType
 }
-func NewErrCodeMsg(errCode uint32, errMsg string) *CodeError {
-	return &CodeError{Code: errCode, Message: errMsg}
-}
 
-func NewErrMsg(errMsg string) *CodeError {
-	return &CodeError{Code: ErrCodeDefault, Message: errMsg}
+func NewCodeErrWithMsg(errMsg string) *CodeError {
+	return NewCodeErrWithCodeMsg(ErrCodeDefault, errMsg)
 }
-
+func NewCodeErrWithCodeMsg(errCode uint32, errMsg string) *CodeError {
+	return NewErrCodeMsgReason(errCode, errMsg, "", "")
+}
 func NewErrCodeMsgReason(errCode uint32, errMsg string, reason string, traceId string) *CodeError {
-	return &CodeError{Code: errCode, Message: errMsg, Reason: reason, TraceId: traceId}
+	return NewCodeErrWithType(errCode, errMsg, reason, traceId, ErrTypeDefault)
+}
+
+func NewCodeErrWithType(code uint32, errMsg string, reason string, traceId string, errType ErrorType) *CodeError {
+	return &CodeError{Code: code, Message: errMsg, Reason: reason, TraceId: traceId, ErrType: errType}
 }

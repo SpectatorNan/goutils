@@ -3,6 +3,8 @@ package respx
 import (
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
 	"github.com/SpectatorNan/goutils/errors"
 	errorx2 "github.com/SpectatorNan/goutils/errorx"
@@ -10,7 +12,6 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 var okStatusCode = http.StatusOK
@@ -113,29 +114,29 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 
 		// 根据错误类型使用不同的日志级别
 		logger := logx.WithContext(r.Context())
-		
+
 		// 检查是否为 NotFoundResource 错误类型
-		var isNotFoundResource bool
+		var isUseInfoLog bool
 		if normalResult != nil {
 			// 从 normalResult 中推断错误类型
 			if et, hasErrorType := causeErr.(errorx2.IErrorType); hasErrorType {
-				isNotFoundResource = et.ErrorType() == errorx2.ErrTypeNotFoundResource
+				isUseInfoLog = et.ErrorType().LogLevel() == errorx2.ErrLogLevelInfo
 			}
 		} else if _, ok := status.FromError(causeErr); ok {
 			// gRPC 错误情况
 			grpcErr := errorx2.ErrorFromGrpcStatus(causeErr)
 			if et, hasErrorType := grpcErr.(errorx2.IErrorType); hasErrorType {
-				isNotFoundResource = et.ErrorType() == errorx2.ErrTypeNotFoundResource
+				isUseInfoLog = et.ErrorType().LogLevel() == errorx2.ErrLogLevelInfo
 			}
 		}
-		
+
 		// 根据错误类型选择日志级别，NotFoundResource 使用 info 级别减少噪音
-		if isNotFoundResource {
-			logger.Infof("【API-INFO】 Resource not found: %s", errmsg)
+		if isUseInfoLog {
+			logger.Infof("【API-INFO】 info error: %s", errmsg)
 		} else {
-			logger.Errorf("【API-ERR】 %+v ", err)
+			logger.Errorf("【API-ERR】 error: %+v ", err)
 		}
-		
+
 		if debugMode {
 			errmsg = err.Error()
 		}

@@ -3,6 +3,9 @@ package errorx
 import (
 	"context"
 	"fmt"
+	"runtime"
+	"strings"
+
 	"github.com/SpectatorNan/go-zero-i18n/goi18nx"
 	"github.com/SpectatorNan/goutils/errors"
 	"github.com/SpectatorNan/goutils/tools"
@@ -12,8 +15,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
-	"runtime"
-	"strings"
 )
 
 var ErrResourceNotFound = errors.New("record not found")
@@ -70,7 +71,6 @@ type GrpcErrorInfoDomain string
 const (
 	GrpcErrorInfoDomain_I18n = "i18n"
 	GrpcErrorInfoDomain_Code = "code"
-	//GrpcErrorInfoDomain_Forbidden = "forbidden"
 )
 
 func GrpcErrorWithDetails(ctx context.Context, err error) error {
@@ -115,23 +115,6 @@ func GrpcErrorWithDetails(ctx context.Context, err error) error {
 		st, _ = st.WithDetails(detailsProto)
 		return st.Err()
 	}
-
-	//var forbiddenErr *ForbiddenError
-	//if errors.As(cause, &forbiddenErr) {
-	//	//code := codes.PermissionDenied
-	//	code := forbiddenErr.Code
-	//	msg := forbiddenErr.Message
-	//	if goi18nx.IsHasI18n(context.Background()) {
-	//		msg = goi18nx.FormatText(ctx, forbiddenErr.MsgKey, forbiddenErr.Message)
-	//	}
-	//	st := status.New(codes.Code(code), msg)
-	//	detailsProto := &errdetails.ErrorInfo{
-	//		Reason: forbiddenErr.Reason,
-	//		Domain: "forbidden",
-	//	}
-	//	st, _ = st.WithDetails(detailsProto)
-	//	return st.Err()
-	//}
 
 	return status.Error(codes.Code(ErrCodeDefault), err.Error())
 }

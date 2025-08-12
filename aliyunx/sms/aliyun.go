@@ -86,7 +86,7 @@ func (s *Client) Send(phone, code string) (*dysmsapi20170525.SendSmsResponse, er
 	sendSmsRequest.SignName = tea.String(template.SignName)
 	client := s.createClient(template.Endpoint)
 	if client == nil {
-		return nil, errorx.NewErrMsg("init sms client failed")
+		return nil, errorx.NewCodeErrWithMsg("init sms client failed")
 	}
 
 	runtime := &util.RuntimeOptions{}
@@ -159,7 +159,7 @@ func (s *Client) HandResponse(ctx context.Context, res *dysmsapi20170525.SendSms
 		if res.Body.Message != nil {
 			msg = *res.Body.Message
 		}
-		return errorx.NewErrMsg(msg)
+		return errorx.NewCodeErrWithMsg(msg)
 	}
 }
 

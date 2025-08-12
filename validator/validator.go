@@ -22,7 +22,7 @@ func (v GoZeroValidator) Validate(r *http.Request, data any) error {
 	validate := r.Context().Value(I18nKey).(*Validator)
 	msg, valid := validate.Valid(data)
 	if !valid {
-		return errorx.NewErrMsg(msg)
+		return errorx.NewCodeErrWithMsg(msg)
 	}
 	return nil
 }
