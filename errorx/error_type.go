@@ -4,6 +4,8 @@ import "google.golang.org/grpc/codes"
 
 type ErrorType uint32
 
+const ErrDefaultStatusCode = codes.Code(ErrCodeDefault)
+
 const (
 	ErrTypeDefault ErrorType = iota
 	ErrTypeNotFoundResource
@@ -23,13 +25,13 @@ type IErrorType interface {
 func (e ErrorType) StatusCode() codes.Code {
 	switch e {
 	case ErrTypeDefault:
-		return codes.OK
+		return ErrDefaultStatusCode
 	case ErrTypeNotFoundResource:
 		return codes.NotFound
 	case ErrTypeForbidden:
 		return codes.PermissionDenied
 	case ErrTypeInfo:
-		return codes.OK
+		return ErrDefaultStatusCode
 	default:
 		return codes.Internal
 	}

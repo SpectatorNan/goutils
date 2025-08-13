@@ -94,8 +94,11 @@ func GrpcErrorWithDetails(ctx context.Context, err error) error {
 				"error_type":  i18nErr.ErrorType().String(),
 			},
 		}
-		st, _ = st.WithDetails(detailsProto)
-		return st.Err()
+		newSt, detailErr := st.WithDetails(detailsProto)
+		if detailErr != nil {
+			return st.Err()
+		}
+		return newSt.Err()
 	}
 
 	var codeErr *CodeError
@@ -112,8 +115,11 @@ func GrpcErrorWithDetails(ctx context.Context, err error) error {
 				"error_type": codeErr.ErrorType().String(),
 			},
 		}
-		st, _ = st.WithDetails(detailsProto)
-		return st.Err()
+		newSt, detailErr := st.WithDetails(detailsProto)
+		if detailErr != nil {
+			return st.Err()
+		}
+		return newSt.Err()
 	}
 
 	return status.Error(codes.Code(ErrCodeDefault), err.Error())

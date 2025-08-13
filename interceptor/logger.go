@@ -15,7 +15,7 @@ func LoggerInterceptor(ctx context.Context, req interface{}, info *grpc.UnarySer
 	if err != nil {
 		logErr := err
 		err = errorx.GrpcErrorWithDetails(ctx, err)
-		if shouldUseInfoLevel(err, logErr) {
+		if shouldUseInfoLevel(logErr) {
 			logx.WithContext(ctx).Infof("【RPC-SRV-ERR】 %v", logErr)
 		} else {
 			logx.WithContext(ctx).Errorf("【RPC-SRV-ERR】 %+v", logErr)
@@ -24,8 +24,8 @@ func LoggerInterceptor(ctx context.Context, req interface{}, info *grpc.UnarySer
 
 	return resp, err
 }
-func shouldUseInfoLevel(err error, logErr error) bool {
-	if et, hasErrorType := err.(errorx.IErrorType); hasErrorType {
+func shouldUseInfoLevel(logErr error) bool {
+	if et, hasErrorType := logErr.(errorx.IErrorType); hasErrorType {
 		return et.ErrorType().LogLevel() == errorx.ErrLogLevelInfo
 	}
 	return errors.Is(logErr, errorx.ErrResourceNotFound)
