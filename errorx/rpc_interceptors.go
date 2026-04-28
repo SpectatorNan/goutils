@@ -80,7 +80,7 @@ func GrpcErrorWithDetails(ctx context.Context, err error) error {
 	if errors.As(cause, &i18nErr) {
 		code := i18nErr.Code
 		msg := i18nErr.DefaultMsg
-		if goi18nx.IsHasI18n(context.Background()) {
+		if goi18nx.IsHasI18n(ctx) {
 			msg = goi18nx.FormatText(ctx, i18nErr.MsgKey, i18nErr.DefaultMsg)
 		}
 		st := status.New(i18nErr.ErrorType().StatusCode(), msg)
