@@ -41,7 +41,7 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 	statusCode := okStatusCode
 	if err == nil {
 		//成功返回
-		rp := NewSuccessResponse(resp)
+		rp := NewSuccessResponse(desensitizeResp(ctx, resp))
 		httpx.WriteJson(w, statusCode, rp)
 	} else {
 		//错误返回
