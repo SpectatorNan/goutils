@@ -29,27 +29,27 @@ func (p PageRespT[T]) DesensitizeType() privacy.DesensitizeType {
 func NewPageRespT[T any](page, pageSize int, total int64, data T) *PageRespT[T] {
 	pageData := createPaging(page, pageSize, total)
 	return &PageRespT[T]{
-		PageData:         pageData,
-		Data:             data,
+		PageData:        pageData,
+		Data:            data,
 		desensitizeData: defaultPageRespDataDesensitizer[T],
 	}
 }
 
 func NewSensitivePageRespT[T privacy.Desensitize](page, pageSize int, total int64, data T) *PageRespT[T] {
 	resp := NewPageRespT(page, pageSize, total, data)
-	resp.desensitizeData = MakeDesensitizeValue[T]
+	resp.desensitizeData = privacy.MakeDesensitizeValue[T]
 	return resp
 }
 
 func NewSensitivePageRespSlice[T privacy.Desensitize](page, pageSize int, total int64, data []T) *PageRespT[[]T] {
 	resp := NewPageRespT(page, pageSize, total, data)
-	resp.desensitizeData = MakeDesensitizeSlice[T]
+	resp.desensitizeData = privacy.MakeDesensitizeSlice[T]
 	return resp
 }
 
 func NewSensitivePageRespPtrSlice[T privacy.Desensitize](page, pageSize int, total int64, data []*T) *PageRespT[[]*T] {
 	resp := NewPageRespT(page, pageSize, total, data)
-	resp.desensitizeData = MakeDesensitizePtrSlice[T]
+	resp.desensitizeData = privacy.MakeDesensitizePtrSlice[T]
 	return resp
 }
 
@@ -61,42 +61,3 @@ func defaultPageRespDataDesensitizer[T any](ctx privacy.ViewerContext, data T) T
 	}
 	return data
 }
-
-func MakeDesensitizeValue[T privacy.Desensitize](ctx privacy.ViewerContext, data T) T {
-	if masked, ok := data.MakeDesensitize(ctx).(T); ok {
-		return masked
-	}
-	return data
-}
-
-func MakeDesensitizeSlice[T privacy.Desensitize](ctx privacy.ViewerContext, data []T) []T {
-	if data == nil {
-		return nil
-	}
-	out := make([]T, len(data))
-	for i := range data {
-		out[i] = MakeDesensitizeValue(ctx, data[i])
-	}
-	return out
-}
-
-func MakeDesensitizePtrSlice[T privacy.Desensitize](ctx privacy.ViewerContext, data []*T) []*T {
-	if data == nil {
-		return nil
-	}
-	out := make([]*T, len(data))
-	for i, item := range data {
-		if item == nil {
-			continue
-		}
-		if masked, ok := (*item).MakeDesensitize(ctx).(T); ok {
-			maskedCopy := masked
-			out[i] = &maskedCopy
-			continue
-		}
-		copied := *item
-		out[i] = &copied
-	}
-	return out
-}
-
